@@ -7,6 +7,9 @@ dist/
 build/
 *.dist
 
+# Locally persisted form submissions (see server/leads.ts)
+/data/
+
 # Environment variables
 .env
 .env.local
