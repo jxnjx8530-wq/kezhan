@@ -26,10 +26,10 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const HERO_IMAGE = "/manus-storage/kezhan-hero-editorial_b4cc81fc.jpg";
-const CAFE_IMAGE = "/manus-storage/kezhan-cafe-reference_686de322.png";
-const STORY_IMAGE = "/manus-storage/kezhan-street-reference_3742581c.jpg";
-const BRAND_MARK = "/manus-storage/kezhan-mark_48dba87b.png";
+const HERO_IMAGE = "/images/hero-editorial.svg";
+const CAFE_IMAGE = "/images/cafe-scene.svg";
+const STORY_IMAGE = "/images/story-archive.svg";
+const BRAND_MARK = "/brand-mark.svg";
 
 const navItems = [
   { label: "커짠 소개", href: "#about" },

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="카페에서 대화를 연습하는 장면을 상징하는 일러스트">
+  <defs>
+    <radialGradient id="cafeGlow" cx="50%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#3a2f28" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#1b1917" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="cupBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F0E7"/>
+      <stop offset="100%" stop-color="#D8CBB0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="700" fill="url(#cafeGlow)"/>
+
+  <!-- table -->
+  <rect x="0" y="560" width="900" height="140" fill="#141210"/>
+  <line x1="0" y1="560" x2="900" y2="560" stroke="#D9B495" stroke-opacity="0.25" stroke-width="2"/>
+
+  <!-- saucer -->
+  <ellipse cx="430" cy="560" rx="170" ry="24" fill="#0f0d0c" opacity="0.55"/>
+  <ellipse cx="430" cy="552" rx="150" ry="20" fill="#F5F0E7" opacity="0.14"/>
+
+  <!-- cup -->
+  <g>
+    <path d="M330 380 L 350 545 C 350 560, 510 560, 510 545 L 530 380 Z" fill="url(#cupBody)" opacity="0.92"/>
+    <ellipse cx="430" cy="380" rx="100" ry="18" fill="#EDE6D8"/>
+    <ellipse cx="430" cy="380" rx="100" ry="18" fill="none" stroke="#A63D32" stroke-opacity="0.4" stroke-width="3"/>
+    <!-- handle -->
+    <path d="M528 410 C 600 410, 600 500, 528 505" fill="none" stroke="#F5F0E7" stroke-opacity="0.85" stroke-width="16" stroke-linecap="round"/>
+  </g>
+
+  <!-- steam curling into two speech-quote shapes -->
+  <g fill="none" stroke="#D9B495" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round">
+    <path d="M390 350 C 370 310, 410 290, 392 250 C 378 222, 400 205, 392 180"/>
+    <path d="M460 350 C 480 310, 445 288, 462 250 C 476 222, 452 205, 462 180"/>
+  </g>
+  <g fill="#A63D32" opacity="0.75">
+    <path d="M382 150 c -16 0 -26 12 -26 27 c 0 14 10 25 24 25 c 2 0 4 0 6 -1 c -3 10 -12 17 -22 19 l 2 10 c 22 -3 38 -20 38 -46 c 0 -20 -10 -34 -22 -34 z"/>
+    <path d="M472 150 c -16 0 -26 12 -26 27 c 0 14 10 25 24 25 c 2 0 4 0 6 -1 c -3 10 -12 17 -22 19 l 2 10 c 22 -3 38 -20 38 -46 c 0 -20 -10 -34 -22 -34 z"/>
+  </g>
+
+  <!-- small pastry plate, side -->
+  <g transform="translate(700,520)">
+    <ellipse cx="0" cy="0" rx="90" ry="16" fill="#0f0d0c" opacity="0.5"/>
+    <ellipse cx="0" cy="-6" rx="76" ry="13" fill="#EDE6D8" opacity="0.85"/>
+    <path d="M-30 -10 C -30 -34, 30 -34, 30 -10 C 30 2, -30 2, -30 -10 Z" fill="#A63D32" opacity="0.55"/>
+  </g>
+
+  <!-- thin gold accent rules framing the scene -->
+  <g stroke="#D9B495" stroke-opacity="0.3" stroke-width="1.5">
+    <line x1="60" y1="80" x2="220" y2="80"/>
+    <line x1="60" y1="80" x2="60" y2="200"/>
+  </g>
+</svg>
