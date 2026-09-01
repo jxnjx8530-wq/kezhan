@@ -30,9 +30,9 @@ import { toast } from "sonner";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { submitLead } from "@/lib/api";
 
-const HERO_IMAGE = "/images/hero-editorial.svg";
-const CAFE_IMAGE = "/images/cafe-scene.svg";
-const STORY_IMAGE = "/images/story-archive.svg";
+const HERO_IMAGE = "/images/hero-editorial.jpg";
+const CAFE_IMAGE = "/images/cafe-scene.jpg";
+const STORY_IMAGE = "/images/story-archive.jpg";
 const BRAND_MARK = "/brand-mark.svg";
 
 const navItems = [
