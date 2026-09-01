@@ -1223,8 +1223,7 @@ p {
 .cta-stamp img {
   width: 19px;
   height: 19px;
-  filter: brightness(0) invert(1);
-  opacity: 0.88;
+  opacity: 0.92;
 }
 .button-light {
   color: var(--burgundy);

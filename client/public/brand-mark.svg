@@ -1,15 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="kezhanMarkTitle">
-  <title id="kezhanMarkTitle">KEZHAN 커짠 워드마크</title>
-  <g fill="#A63D32">
-    <rect x="10.5" y="70" width="7" height="14" rx="3"/>
-    <rect x="19.5" y="60" width="7" height="24" rx="3"/>
-    <rect x="28.5" y="48" width="7" height="36" rx="3"/>
-    <rect x="37.5" y="36" width="7" height="48" rx="3"/>
-    <rect x="45.5" y="24" width="7" height="60" rx="3"/>
-    <rect x="47.5" y="24" width="7" height="60" rx="3"/>
-    <rect x="55.5" y="36" width="7" height="48" rx="3"/>
-    <rect x="64.5" y="48" width="7" height="36" rx="3"/>
-    <rect x="73.5" y="60" width="7" height="24" rx="3"/>
-    <rect x="82.5" y="70" width="7" height="14" rx="3"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="kezhanMarkTitle">
+  <title id="kezhanMarkTitle">客栈 KEZHAN 커짠 워드마크</title>
+  <rect x="4" y="4" width="192" height="192" rx="36" fill="#B89455"/>
+  <rect x="16" y="16" width="168" height="168" rx="28" fill="#A63D32"/>
+  <path d="M 40 82 L 64 82 L 100 48 L 136 82 L 160 82" fill="none" stroke="#FBF9F3" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="100" y="128" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','Noto Sans CJK KR','Malgun Gothic','PMingLiU',serif" font-weight="700" font-size="58" fill="#FBF9F3">客</text>
+  <text x="100" y="176" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','Noto Sans CJK KR','Malgun Gothic','PMingLiU',serif" font-weight="700" font-size="58" fill="#FBF9F3">栈</text>
 </svg>
