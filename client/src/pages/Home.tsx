@@ -4,6 +4,7 @@
  */
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
+  AlertTriangle,
   ArrowDownRight,
   ArrowRight,
   BookOpenCheck,
@@ -15,13 +16,18 @@ import {
   FileText,
   Headphones,
   Hotel,
+  Lock,
   MapPinned,
   Menu,
   MessageCircleMore,
+  MessagesSquare,
+  Phone,
   Quote,
   RotateCcw,
   ShoppingBag,
+  Signpost,
   Sparkles,
+  UserRound,
   X,
 } from "lucide-react";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
@@ -43,32 +49,80 @@ const navItems = [
   { label: "자주 묻는 질문", href: "#faq" },
 ];
 
-const scenarios = [
-  { icon: Coffee, title: "카페 주문", desc: "첫 주문을 자연스럽게 이어가기" },
+const scenarioThemes = [
   {
-    icon: MessageCircleMore,
-    title: "식당 문제제기",
-    desc: "불편한 상황을 부드럽게 설명하기",
+    key: "gourmet",
+    name: "미식채",
+    tag: "식사",
+    scenarios: [
+      {
+        icon: Coffee,
+        title: "카페 주문",
+        desc: "첫 주문을 자연스럽게 이어가기",
+      },
+      {
+        icon: MessageCircleMore,
+        title: "식당 문제제기",
+        desc: "불편한 상황을 부드럽게 설명하기",
+      },
+    ],
   },
   {
-    icon: MapPinned,
-    title: "택시 목적지",
-    desc: "목적지와 경로를 또렷하게 전하기",
+    key: "journey",
+    name: "여정채",
+    tag: "교통·숙박",
+    scenarios: [
+      {
+        icon: MapPinned,
+        title: "택시 목적지",
+        desc: "목적지와 경로를 또렷하게 전하기",
+      },
+      {
+        icon: Hotel,
+        title: "호텔 체크인",
+        desc: "도착부터 요청까지 침착하게 말하기",
+      },
+      { icon: Signpost, title: "길 묻기", desc: "방향과 거리를 물어보기" },
+    ],
   },
   {
-    icon: Hotel,
-    title: "호텔 체크인",
-    desc: "도착부터 요청까지 침착하게 말하기",
+    key: "market",
+    name: "상점채",
+    tag: "쇼핑",
+    scenarios: [
+      {
+        icon: ShoppingBag,
+        title: "쇼핑",
+        desc: "가격과 옵션을 자연스럽게 묻기",
+      },
+    ],
   },
-  { icon: ShoppingBag, title: "쇼핑", desc: "가격과 옵션을 자연스럽게 묻기" },
-];
-
-const moreScenarios = [
-  "길 묻기",
-  "자기소개",
-  "전화 예약",
-  "가벼운 잡담",
-  "긴급 상황",
+  {
+    key: "village",
+    name: "마을채",
+    tag: "생활·건강",
+    scenarios: [
+      { icon: UserRound, title: "자기소개", desc: "나를 자연스럽게 소개하기" },
+      { icon: Phone, title: "전화 예약", desc: "필요한 용건을 정확히 전하기" },
+      {
+        icon: MessagesSquare,
+        title: "가벼운 잡담",
+        desc: "일상적인 대화를 이어가기",
+      },
+      {
+        icon: AlertTriangle,
+        title: "긴급 상황",
+        desc: "도움이 필요할 때 침착하게 말하기",
+      },
+    ],
+  },
+  {
+    key: "secret",
+    name: "비밀채",
+    tag: "확장 예정",
+    locked: true,
+    scenarios: [],
+  },
 ];
 
 const comparisons = [
@@ -265,6 +319,7 @@ export default function Home() {
   );
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [activeTheme, setActiveTheme] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -599,29 +654,53 @@ export default function Home() {
                 </figcaption>
               </motion.figure>
               <motion.div {...reveal} className="scenario-list">
-                {scenarios.map((scenario, index) => {
-                  const Icon = scenario.icon;
-                  return (
+                <div className="theme-tabs">
+                  {scenarioThemes.map((theme, index) => (
                     <button
-                      key={scenario.title}
-                      className="scenario-row"
-                      onClick={handleTrial}
+                      key={theme.key}
+                      className={`theme-tab ${index === activeTheme ? "active" : ""} ${theme.locked ? "locked" : ""}`}
+                      onClick={() => setActiveTheme(index)}
+                      aria-pressed={index === activeTheme}
                     >
-                      <span className="scenario-number">0{index + 1}</span>
-                      <Icon size={20} />
-                      <span>
-                        <strong>{scenario.title}</strong>
-                        <small>{scenario.desc}</small>
-                      </span>
-                      <ArrowRight size={19} />
+                      {theme.locked && <Lock size={12} />}
+                      <span className="theme-tab-name">{theme.name}</span>
+                      <span className="theme-tab-tag">{theme.tag}</span>
                     </button>
-                  );
-                })}
-                <div className="more-scenarios">
-                  {moreScenarios.map(item => (
-                    <span key={item}>{item}</span>
                   ))}
                 </div>
+                {scenarioThemes[activeTheme].locked ? (
+                  <div className="theme-locked">
+                    <Lock size={22} />
+                    <div>
+                      <strong>다음 채는 준비 중입니다.</strong>
+                      <p>
+                        커짠이 다루는 상황이 늘어날 때마다, 새 채가 하나씩
+                        열립니다.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  scenarioThemes[activeTheme].scenarios.map(
+                    (scenario, index) => {
+                      const Icon = scenario.icon;
+                      return (
+                        <button
+                          key={scenario.title}
+                          className="scenario-row"
+                          onClick={handleTrial}
+                        >
+                          <span className="scenario-number">0{index + 1}</span>
+                          <Icon size={20} />
+                          <span>
+                            <strong>{scenario.title}</strong>
+                            <small>{scenario.desc}</small>
+                          </span>
+                          <ArrowRight size={19} />
+                        </button>
+                      );
+                    }
+                  )
+                )}
               </motion.div>
             </div>
             <motion.div {...reveal} className="feedback-panel">

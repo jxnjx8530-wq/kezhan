@@ -791,18 +791,63 @@ p {
   color: rgb(255 250 244 / 55%);
   font-size: 11px;
 }
-.more-scenarios {
+.theme-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding-top: 20px;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgb(255 250 244 / 18%);
 }
-.more-scenarios span {
-  padding: 4px 9px;
+.theme-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
   color: rgb(255 250 244 / 65%);
+  background: transparent;
   border: 1px solid rgb(255 250 244 / 27%);
   border-radius: 40px;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  transition:
+    color 160ms var(--ease-out),
+    background 160ms var(--ease-out),
+    border-color 160ms var(--ease-out);
+}
+.theme-tab:hover {
+  color: #fffaf4;
+  border-color: rgb(255 250 244 / 50%);
+}
+.theme-tab.active {
+  color: #fffaf4;
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+}
+.theme-tab.locked {
+  border-style: dashed;
+}
+.theme-tab-tag {
+  font-weight: 400;
+  opacity: 0.6;
+}
+.theme-locked {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 30px 2px;
+  color: rgb(255 250 244 / 55%);
+}
+.theme-locked strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #fffaf4;
+  font-size: 14px;
+}
+.theme-locked p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
 }
 .feedback-panel {
   display: grid;
