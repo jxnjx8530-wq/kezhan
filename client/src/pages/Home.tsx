@@ -24,7 +24,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { WaitlistDialog } from "@/components/WaitlistDialog";
@@ -237,7 +237,7 @@ function SectionIntro({
 }: {
   index: string;
   eyebrow: string;
-  title: string;
+  title: ReactNode;
   text?: string;
 }) {
   return (
@@ -466,7 +466,15 @@ export default function Home() {
               <SectionIntro
                 index="02"
                 eyebrow="WHY KEZHAN"
-                title="알고 있는 문장과, 입 밖으로 나오는 문장 사이."
+                title={
+                  <>
+                    알고 있는 문장과,
+                    <br />
+                    입 밖으로 나오는
+                    <br />
+                    문장 사이.
+                  </>
+                }
               />
             </motion.div>
             <motion.div {...reveal} className="problem-content">
@@ -525,7 +533,12 @@ export default function Home() {
               <SectionIntro
                 index="03"
                 eyebrow="OUR STORY"
-                title="20여 년의 현장 경험에서, 한 가지 질문이 시작됐습니다."
+                title={
+                  <>
+                    20여 년의 현장 경험에서,
+                    <br />한 가지 질문이 시작됐습니다.
+                  </>
+                }
               />
               <blockquote>
                 “왜 중국어를 오래 공부해도 중국 현지에서는 말이 잘 나오지
@@ -557,7 +570,13 @@ export default function Home() {
               <SectionIntro
                 index="04"
                 eyebrow="PRACTICE IN CONTEXT"
-                title="외우는 중국어가 아니라, 대화하는 중국어."
+                title={
+                  <>
+                    외우는 중국어가 아니라,
+                    <br />
+                    대화하는 중국어.
+                  </>
+                }
                 text="커짠의 핵심은 AI와 나누는 실전 대화입니다. 일상에서 실제로 마주할 수 있는 장면을 그대로 재현합니다."
               />
               <div className="practice-quote">
@@ -629,7 +648,13 @@ export default function Home() {
               <SectionIntro
                 index="05"
                 eyebrow="TEXTBOOK / LOCAL"
-                title="한 문장이, 현지의 말투가 되기까지."
+                title={
+                  <>
+                    한 문장이,
+                    <br />
+                    현지의 말투가 되기까지.
+                  </>
+                }
                 text="같은 상황에서도 실제 대화는 조금 더 부드럽고, 조금 더 구체적입니다."
               />
             </motion.div>
@@ -673,7 +698,12 @@ export default function Home() {
               <SectionIntro
                 index="06"
                 eyebrow="THE RESEARCH NOTE"
-                title="학습의 맥락을, 더 오래 들여다봅니다."
+                title={
+                  <>
+                    학습의 맥락을,
+                    <br />더 오래 들여다봅니다.
+                  </>
+                }
               />
             </motion.div>
             <motion.div {...reveal}>
@@ -724,7 +754,13 @@ export default function Home() {
               <SectionIntro
                 index="07"
                 eyebrow="THE MOMENT BEFORE SPEAKING"
-                title="학습 현장에서 자주 들은 말들."
+                title={
+                  <>
+                    학습 현장에서
+                    <br />
+                    자주 들은 말들.
+                  </>
+                }
               />
               <p>
                 다음 문장은 고객 후기나 성과 보장이 아니라, 회화 학습자가 실제
@@ -758,7 +794,13 @@ export default function Home() {
               <SectionIntro
                 index="08"
                 eyebrow="HOW IT WORKS"
-                title="다섯 단계로, 오늘의 대화를 시작합니다."
+                title={
+                  <>
+                    다섯 단계로,
+                    <br />
+                    오늘의 대화를 시작합니다.
+                  </>
+                }
                 text="정답을 빨리 찾기보다, 내 속도로 실제 말을 꺼내보는 과정입니다."
               />
             </motion.div>
@@ -795,7 +837,13 @@ export default function Home() {
               <SectionIntro
                 index="09"
                 eyebrow="THE LEARNING LOOP"
-                title="한 번의 대화로 끝나지 않고, 계속 도는 학습 주기."
+                title={
+                  <>
+                    한 번의 대화로 끝나지 않고,
+                    <br />
+                    계속 도는 학습 주기.
+                  </>
+                }
                 text="정해진 커리큘럼을 순서대로 따라가는 대신, 짧은 대화와 피드백을 반복하며 자연스럽게 실력이 쌓이는 학습 주기를 만듭니다."
               />
             </motion.div>
@@ -918,7 +966,13 @@ export default function Home() {
               <SectionIntro
                 index="11"
                 eyebrow="A GOOD FIT, HONESTLY"
-                title="커짠이 잘 맞는 순간과, 다른 도움이 더 필요한 순간."
+                title={
+                  <>
+                    커짠이 잘 맞는 순간과,
+                    <br />
+                    다른 도움이 더 필요한 순간.
+                  </>
+                }
                 text="학습 목적이 다르면 가장 좋은 방법도 달라집니다. 나에게 맞는 방식을 선택할 수 있도록 분명히 안내합니다."
               />
             </motion.div>
@@ -975,7 +1029,13 @@ export default function Home() {
               <SectionIntro
                 index="12"
                 eyebrow="CONTACT"
-                title="함께 이야기할 준비가 되면, 메시지를 남겨주세요."
+                title={
+                  <>
+                    함께 이야기할 준비가 되면,
+                    <br />
+                    메시지를 남겨주세요.
+                  </>
+                }
               />
               <p>
                 일반 문의부터 제휴, 학원·기업 도입, 요금 관련 질문까지 남겨주실

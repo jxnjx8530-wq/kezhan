@@ -289,6 +289,8 @@ h2,
 h3,
 p {
   margin-top: 0;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 .hero h1 {
   margin-bottom: 27px;
@@ -490,6 +492,9 @@ p {
   font-weight: 700;
   line-height: 1.38;
   letter-spacing: -0.065em;
+}
+.rail-layout .section-intro h2 {
+  font-size: clamp(26px, 2.4vw, 38px);
 }
 .section-description {
   max-width: 565px;
