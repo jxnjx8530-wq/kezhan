@@ -858,7 +858,10 @@ export default function Home() {
                     </div>
                   </div>
                 ) : (
-                  <div className="scenario-rows">
+                  <div
+                    className="scenario-rows"
+                    key={scenarioThemes[activeTheme].key}
+                  >
                     {scenarioThemes[activeTheme].scenarios.map(
                       (scenario, index) => {
                         const Icon = scenario.icon;
