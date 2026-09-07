@@ -519,11 +519,14 @@ p {
   letter-spacing: -0.05em;
 }
 .problem-list {
+  display: grid;
+  grid-template-columns: 46px 1fr 1.28fr;
   border-top: 1px solid var(--ink);
 }
 .problem-list article {
   display: grid;
-  grid-template-columns: 46px 1fr 1.28fr;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   gap: 16px;
   padding: 23px 0;
   border-bottom: 1px solid var(--line);
