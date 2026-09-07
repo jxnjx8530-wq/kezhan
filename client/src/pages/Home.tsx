@@ -7,27 +7,55 @@ import {
   AlertTriangle,
   ArrowDownRight,
   ArrowRight,
+  Bike,
   BookOpenCheck,
   BrainCircuit,
+  CalendarClock,
   Check,
   ChevronDown,
+  ClipboardList,
   Coffee,
   Compass,
+  CookingPot,
+  DoorOpen,
+  Dumbbell,
   FileText,
+  Flame,
+  Gift,
+  HandCoins,
+  HandHeart,
   Headphones,
   Hotel,
+  KeyRound,
+  Landmark,
   Lock,
   MapPinned,
   Menu,
   MessageCircleMore,
+  MessageSquareWarning,
   MessagesSquare,
+  PackageOpen,
+  PackageSearch,
   Phone,
+  PlaneTakeoff,
   Quote,
+  Receipt,
   RotateCcw,
+  Route,
+  Scale,
+  Scissors,
   ShoppingBag,
   Signpost,
   Sparkles,
+  Star,
+  Stethoscope,
+  Shirt,
+  Store,
+  Ticket,
+  Truck,
+  Undo2,
   UserRound,
+  Wine,
   X,
 } from "lucide-react";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
@@ -65,6 +93,46 @@ const scenarioThemes = [
         title: "식당 문제제기",
         desc: "불편한 상황을 부드럽게 설명하기",
       },
+      {
+        icon: ClipboardList,
+        title: "메뉴 추천 요청",
+        desc: "직원에게 메뉴를 추천해달라고 요청하기",
+      },
+      {
+        icon: Bike,
+        title: "배달 음식 주문",
+        desc: "전화나 앱으로 배달을 주문하기",
+      },
+      {
+        icon: Flame,
+        title: "알레르기·맵기 조절",
+        desc: "못 먹는 음식과 맵기를 미리 말하기",
+      },
+      {
+        icon: Receipt,
+        title: "계산·나눠내기",
+        desc: "계산 방식을 정하고 요청하기",
+      },
+      {
+        icon: PackageOpen,
+        title: "포장 요청",
+        desc: "남은 음식을 포장해달라고 말하기",
+      },
+      {
+        icon: Wine,
+        title: "술자리 건배",
+        desc: "건배와 술자리 예의를 표현하기",
+      },
+      {
+        icon: CookingPot,
+        title: "길거리 음식 구매",
+        desc: "노점에서 간단히 주문하기",
+      },
+      {
+        icon: CalendarClock,
+        title: "예약 확인·변경",
+        desc: "식당 예약을 확인하고 바꾸기",
+      },
     ],
   },
   {
@@ -83,6 +151,41 @@ const scenarioThemes = [
         desc: "도착부터 요청까지 침착하게 말하기",
       },
       { icon: Signpost, title: "길 묻기", desc: "방향과 거리를 물어보기" },
+      {
+        icon: Ticket,
+        title: "기차·버스표 구매",
+        desc: "표를 사고 좌석을 확인하기",
+      },
+      {
+        icon: PlaneTakeoff,
+        title: "공항 체크인",
+        desc: "탑승 수속과 수하물을 안내받기",
+      },
+      {
+        icon: DoorOpen,
+        title: "호텔 체크아웃",
+        desc: "정산과 짐 보관을 요청하기",
+      },
+      {
+        icon: MessageSquareWarning,
+        title: "방 컴플레인",
+        desc: "객실 문제를 정중히 알리기",
+      },
+      {
+        icon: Bike,
+        title: "렌터카·공유자전거",
+        desc: "이용 방법을 물어보기",
+      },
+      {
+        icon: Route,
+        title: "환승·경유 안내",
+        desc: "환승 방법을 확인하기",
+      },
+      {
+        icon: PackageSearch,
+        title: "분실물 문의",
+        desc: "잃어버린 물건을 찾기",
+      },
     ],
   },
   {
@@ -94,6 +197,51 @@ const scenarioThemes = [
         icon: ShoppingBag,
         title: "쇼핑",
         desc: "가격과 옵션을 자연스럽게 묻기",
+      },
+      {
+        icon: Shirt,
+        title: "사이즈·색상 요청",
+        desc: "원하는 사이즈나 색상을 찾기",
+      },
+      {
+        icon: Undo2,
+        title: "시착·환불 문의",
+        desc: "입어보거나 교환·환불을 요청하기",
+      },
+      {
+        icon: HandCoins,
+        title: "흥정하기",
+        desc: "가격을 정중하게 흥정하기",
+      },
+      {
+        icon: Gift,
+        title: "면세·포장 요청",
+        desc: "면세 절차와 선물 포장을 요청하기",
+      },
+      {
+        icon: Star,
+        title: "기념품 추천 요청",
+        desc: "현지에서 추천하는 기념품을 물어보기",
+      },
+      {
+        icon: Truck,
+        title: "온라인 주문·배송 문의",
+        desc: "배송 상태를 확인하기",
+      },
+      {
+        icon: Receipt,
+        title: "영수증·교환 규정",
+        desc: "영수증과 교환 조건을 확인하기",
+      },
+      {
+        icon: Scale,
+        title: "시장에서 무게 재기",
+        desc: "시장에서 수량과 무게를 말하기",
+      },
+      {
+        icon: Store,
+        title: "매장 위치 문의",
+        desc: "찾는 매장이나 코너를 물어보기",
       },
     ],
   },
@@ -113,6 +261,36 @@ const scenarioThemes = [
         icon: AlertTriangle,
         title: "긴급 상황",
         desc: "도움이 필요할 때 침착하게 말하기",
+      },
+      {
+        icon: Stethoscope,
+        title: "병원·약국 이용",
+        desc: "증상을 설명하고 약을 요청하기",
+      },
+      {
+        icon: Landmark,
+        title: "은행·환전",
+        desc: "환전이나 계좌 관련 용무 보기",
+      },
+      {
+        icon: KeyRound,
+        title: "부동산·집 구하기",
+        desc: "집을 구하거나 계약 조건을 묻기",
+      },
+      {
+        icon: HandHeart,
+        title: "이웃과 인사",
+        desc: "이웃과 가볍게 인사 나누기",
+      },
+      {
+        icon: Scissors,
+        title: "미용실·이발소",
+        desc: "원하는 스타일을 설명하기",
+      },
+      {
+        icon: Dumbbell,
+        title: "헬스장·취미 등록",
+        desc: "등록 방법과 이용 규칙을 묻기",
       },
     ],
   },
@@ -680,26 +858,30 @@ export default function Home() {
                     </div>
                   </div>
                 ) : (
-                  scenarioThemes[activeTheme].scenarios.map(
-                    (scenario, index) => {
-                      const Icon = scenario.icon;
-                      return (
-                        <button
-                          key={scenario.title}
-                          className="scenario-row"
-                          onClick={handleTrial}
-                        >
-                          <span className="scenario-number">0{index + 1}</span>
-                          <Icon size={20} />
-                          <span>
-                            <strong>{scenario.title}</strong>
-                            <small>{scenario.desc}</small>
-                          </span>
-                          <ArrowRight size={19} />
-                        </button>
-                      );
-                    }
-                  )
+                  <div className="scenario-rows">
+                    {scenarioThemes[activeTheme].scenarios.map(
+                      (scenario, index) => {
+                        const Icon = scenario.icon;
+                        return (
+                          <button
+                            key={scenario.title}
+                            className="scenario-row"
+                            onClick={handleTrial}
+                          >
+                            <span className="scenario-number">
+                              {String(index + 1).padStart(2, "0")}
+                            </span>
+                            <Icon size={20} />
+                            <span>
+                              <strong>{scenario.title}</strong>
+                              <small>{scenario.desc}</small>
+                            </span>
+                            <ArrowRight size={19} />
+                          </button>
+                        );
+                      }
+                    )}
+                  </div>
                 )}
               </motion.div>
             </div>

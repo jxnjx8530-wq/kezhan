@@ -750,7 +750,22 @@ p {
 .scenario-list {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid rgb(255 250 244 / 50%);
+}
+.scenario-rows {
+  position: relative;
+  max-height: 330px;
+  margin-right: -4px;
+  padding-right: 4px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 250 244 / 30%) transparent;
+}
+.scenario-rows::-webkit-scrollbar {
+  width: 4px;
+}
+.scenario-rows::-webkit-scrollbar-thumb {
+  background: rgb(255 250 244 / 30%);
+  border-radius: 4px;
 }
 .scenario-row {
   display: grid;
