@@ -421,8 +421,8 @@ export default function Home() {
                 <i />
               </div>
               <p>
-                교과서 중국어를 넘어, 생활중국어 표현을 AI와 연습하는 중국어회화
-                플랫폼
+                교과서 중국어를 넘어, 가상환경 기반 AI와 생활중국어 표현을
+                연습하는 중국어회화 플랫폼
               </p>
               <div className="hero-actions">
                 <button className="button button-solid" onClick={handleTrial}>
@@ -1076,8 +1076,8 @@ export default function Home() {
             <span className="brand-korean">커짠</span>
           </a>
           <p>
-            교과서 중국어를 넘어, 생활중국어 표현을 AI와 연습하는 중국어회화
-            플랫폼
+            교과서 중국어를 넘어, 가상환경 기반 AI와 생활중국어 표현을 연습하는
+            중국어회화 플랫폼
           </p>
           <span>
             © {new Date().getFullYear()} KEZHAN. All rights reserved.
