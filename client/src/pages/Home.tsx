@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   ArrowDownRight,
   ArrowRight,
+  ArrowUpRight,
   Bike,
   BookOpenCheck,
   BrainCircuit,
@@ -62,6 +63,13 @@ import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { WaitlistDialog } from "@/components/WaitlistDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { submitLead } from "@/lib/api";
 
@@ -126,11 +134,13 @@ const scenarioThemes = [
       },
       {
         icon: CookingPot,
+        recent: true,
         ko: { title: "길거리 음식 구매", desc: "노점에서 간단히 주문하기" },
         en: { title: "Buying Street Food", desc: "Order simply at a street stall" },
       },
       {
         icon: CalendarClock,
+        recent: true,
         ko: { title: "예약 확인·변경", desc: "식당 예약을 확인하고 바꾸기" },
         en: { title: "Confirming a Reservation", desc: "Check and change a restaurant booking" },
       },
@@ -183,11 +193,13 @@ const scenarioThemes = [
       },
       {
         icon: Route,
+        recent: true,
         ko: { title: "환승·경유 안내", desc: "환승 방법을 확인하기" },
         en: { title: "Transfers & Layovers", desc: "Confirm how to transfer" },
       },
       {
         icon: PackageSearch,
+        recent: true,
         ko: { title: "분실물 문의", desc: "잃어버린 물건을 찾기" },
         en: { title: "Lost & Found", desc: "Track down something you lost" },
       },
@@ -240,11 +252,13 @@ const scenarioThemes = [
       },
       {
         icon: Scale,
+        recent: true,
         ko: { title: "시장에서 무게 재기", desc: "시장에서 수량과 무게를 말하기" },
         en: { title: "Weighing Goods at a Market", desc: "State quantity and weight at a market" },
       },
       {
         icon: Store,
+        recent: true,
         ko: { title: "매장 위치 문의", desc: "찾는 매장이나 코너를 물어보기" },
         en: { title: "Finding a Store", desc: "Ask where a shop or section is" },
       },
@@ -297,11 +311,13 @@ const scenarioThemes = [
       },
       {
         icon: Scissors,
+        recent: true,
         ko: { title: "미용실·이발소", desc: "원하는 스타일을 설명하기" },
         en: { title: "Hair Salon & Barber", desc: "Describe the style you want" },
       },
       {
         icon: Dumbbell,
+        recent: true,
         ko: { title: "헬스장·취미 등록", desc: "등록 방법과 이용 규칙을 묻기" },
         en: { title: "Gym & Hobby Sign-up", desc: "Ask how to register and the rules" },
       },
@@ -663,7 +679,7 @@ export default function Home() {
   const [waitlistSource, setWaitlistSource] = useState<"trial" | "diagnostic">("trial");
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [contactSubmitted, setContactSubmitted] = useState(false);
-  const [activeTheme, setActiveTheme] = useState(0);
+  const [openTheme, setOpenTheme] = useState<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -727,7 +743,14 @@ export default function Home() {
     })),
   };
 
-  const activeThemeData = scenarioThemes[activeTheme];
+  const dialogTheme = openTheme !== null ? scenarioThemes[openTheme] : null;
+  const recentScenarios = scenarioThemes.flatMap(theme =>
+    theme.locked
+      ? []
+      : theme.scenarios
+          .filter(scenario => scenario.recent)
+          .map(scenario => ({ ...scenario, theme }))
+  );
 
   return (
     <div className="site-shell">
@@ -1085,53 +1108,55 @@ export default function Home() {
                   {scenarioThemes.map((theme, index) => (
                     <button
                       key={theme.key}
-                      className={`theme-tab ${index === activeTheme ? "active" : ""} ${theme.locked ? "locked" : ""}`}
-                      onClick={() => setActiveTheme(index)}
-                      aria-pressed={index === activeTheme}
+                      className={`theme-tab ${theme.locked ? "locked" : ""}`}
+                      onClick={() => setOpenTheme(index)}
                     >
                       {theme.locked && <Lock size={12} />}
                       <span className="theme-tab-name">{t(theme.ko.name, theme.en.name)}</span>
                       <span className="theme-tab-tag">{t(theme.ko.tag, theme.en.tag)}</span>
+                      {!theme.locked && (
+                        <ArrowUpRight size={12} className="theme-tab-open-icon" />
+                      )}
                     </button>
                   ))}
                 </div>
-                {activeThemeData.locked ? (
-                  <div className="theme-locked">
-                    <Lock size={22} />
-                    <div>
-                      <strong>{t("다음 채는 준비 중입니다.", "The next wing is on its way.")}</strong>
-                      <p>
-                        {t(
-                          "커짠이 다루는 상황이 늘어날 때마다, 새 채가 하나씩 열립니다.",
-                          "As KEZHAN covers more situations, a new wing opens one at a time."
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="scenario-rows" key={activeThemeData.key}>
-                    {activeThemeData.scenarios.map((scenario, index) => {
-                      const Icon = scenario.icon;
-                      return (
-                        <button
-                          key={scenario.ko.title}
-                          className="scenario-row"
-                          onClick={handleTrial}
-                        >
-                          <span className="scenario-number">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <Icon size={20} />
-                          <span>
-                            <strong>{t(scenario.ko.title, scenario.en.title)}</strong>
-                            <small>{t(scenario.ko.desc, scenario.en.desc)}</small>
-                          </span>
-                          <ArrowRight size={19} />
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                <div className="recent-scenarios-head">
+                  <span>
+                    <Sparkles size={12} />
+                    {t("최근 업데이트", "Recently Added")}
+                  </span>
+                  <p>
+                    {t(
+                      "채를 클릭하면 전체 목록이 새 창에서 열립니다.",
+                      "Click a wing to open its full list in a new window."
+                    )}
+                  </p>
+                </div>
+                <div className="scenario-rows">
+                  {recentScenarios.map((scenario, index) => {
+                    const Icon = scenario.icon;
+                    return (
+                      <button
+                        key={`${scenario.theme.key}-${scenario.ko.title}`}
+                        className="scenario-row"
+                        onClick={handleTrial}
+                      >
+                        <span className="scenario-number">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <Icon size={20} />
+                        <span>
+                          <strong>{t(scenario.ko.title, scenario.en.title)}</strong>
+                          <small>
+                            {t(scenario.theme.ko.name, scenario.theme.en.name)} ·{" "}
+                            {t(scenario.ko.desc, scenario.en.desc)}
+                          </small>
+                        </span>
+                        <ArrowRight size={19} />
+                      </button>
+                    );
+                  })}
+                </div>
               </motion.div>
             </div>
             <motion.div {...reveal} className="feedback-panel">
@@ -1716,6 +1741,74 @@ export default function Home() {
       </main>
 
       <WaitlistDialog open={waitlistOpen} onOpenChange={setWaitlistOpen} source={waitlistSource} />
+
+      <Dialog open={openTheme !== null} onOpenChange={open => !open && setOpenTheme(null)}>
+        <DialogContent className="sm:max-w-[560px]">
+          {dialogTheme && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  {t(dialogTheme.ko.name, dialogTheme.en.name)}
+                  <span className="theme-tab-tag" style={{ marginLeft: 8 }}>
+                    {t(dialogTheme.ko.tag, dialogTheme.en.tag)}
+                  </span>
+                </DialogTitle>
+                <DialogDescription>
+                  {dialogTheme.locked
+                    ? t(
+                        "이 채는 아직 준비 중입니다.",
+                        "This wing hasn't opened yet."
+                      )
+                    : t(
+                        `총 ${dialogTheme.scenarios.length}개의 대화 상황이 있습니다.`,
+                        `${dialogTheme.scenarios.length} conversation situations, and counting.`
+                      )}
+                </DialogDescription>
+              </DialogHeader>
+              {dialogTheme.locked ? (
+                <div className="scenario-dialog-locked">
+                  <Lock size={22} />
+                  <div>
+                    <strong>{t("다음 채는 준비 중입니다.", "The next wing is on its way.")}</strong>
+                    <p>
+                      {t(
+                        "커짠이 다루는 상황이 늘어날 때마다, 새 채가 하나씩 열립니다.",
+                        "As KEZHAN covers more situations, a new wing opens one at a time."
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="scenario-dialog-list">
+                  {dialogTheme.scenarios.map((scenario, index) => {
+                    const Icon = scenario.icon;
+                    return (
+                      <button
+                        key={scenario.ko.title}
+                        className="scenario-dialog-row"
+                        onClick={() => {
+                          setOpenTheme(null);
+                          handleTrial();
+                        }}
+                      >
+                        <span className="scenario-number">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <Icon size={19} />
+                        <span>
+                          <strong>{t(scenario.ko.title, scenario.en.title)}</strong>
+                          <small>{t(scenario.ko.desc, scenario.en.desc)}</small>
+                        </span>
+                        <ArrowRight size={17} />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <footer className="site-footer">
         <div className="page-frame footer-inner">
