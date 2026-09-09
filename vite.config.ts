@@ -19,11 +19,11 @@ function leadsApiDevPlugin(): Plugin {
         req.on("data", chunk => {
           body += chunk;
         });
-        req.on("end", () => {
+        req.on("end", async () => {
           res.setHeader("Content-Type", "application/json");
           try {
             const parsedBody = body ? JSON.parse(body) : {};
-            const result = saveLead(parsedBody);
+            const result = await saveLead(parsedBody);
             res.statusCode = result.ok ? 200 : result.status;
             res.end(
               JSON.stringify(

@@ -13,8 +13,8 @@ async function startServer() {
 
   app.use(express.json());
 
-  app.post("/api/leads", (req, res) => {
-    const result = saveLead(req.body);
+  app.post("/api/leads", async (req, res) => {
+    const result = await saveLead(req.body);
     if (!result.ok) {
       res.status(result.status).json({ ok: false, error: result.error });
       return;
