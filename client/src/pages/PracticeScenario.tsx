@@ -1,22 +1,17 @@
 /**
- * Prototype: text-based conversation practice, no voice yet.
- * The scripted lines are reference examples of how this exchange could go,
- * not a required script — tapping one just moves the conversation forward,
- * the way real conversation would. Validates the interaction shape before
- * a speech API and a real adaptive AI are wired in.
+ * Generic text-based conversation practice, no voice yet. Renders whichever
+ * scenario the slug points to. The scripted lines are reference examples of
+ * how the exchange could go, not a required script — tapping one just moves
+ * the conversation forward, the way real conversation would. Validates the
+ * interaction shape before a speech API and a real adaptive AI are wired in.
  */
-import { ArrowLeft, Coffee, RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useParams } from "wouter";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  cafeOrderDialogue as dialogue,
-  cafeOrderStepIndex as stepIndex,
-  CAFE_ORDER_TOTAL_STEPS as TOTAL_STEPS,
-  type Choice,
-  type Line,
-} from "@/data/cafeOrderDialogue";
+import { getScenario, type Choice, type Line, type ScenarioData } from "@/data/scenarios";
+import NotFound from "@/pages/NotFound";
 
 const BRAND_MARK = "/brand-mark.svg";
 
@@ -25,11 +20,29 @@ interface Message {
   line: Line;
 }
 
-export default function PracticeCafeOrder() {
+export default function PracticeScenario() {
+  const { slug } = useParams<{ slug: string }>();
+  const scenario = slug ? getScenario(slug) : undefined;
+
+  if (!scenario) {
+    return <NotFound />;
+  }
+
+  return <ScenarioChat scenario={scenario} />;
+}
+
+function initialHistory(scenario: ScenarioData): Message[] {
+  const aiLine = scenario.dialogue.start.aiLine;
+  return aiLine ? [{ speaker: "ai", line: aiLine }] : [];
+}
+
+function ScenarioChat({ scenario }: { scenario: ScenarioData }) {
   const { lang } = useLanguage();
   const t = (ko: string, en: string) => (lang === "ko" ? ko : en);
 
-  const [history, setHistory] = useState<Message[]>([{ speaker: "ai", line: dialogue.start.aiLine }]);
+  const { dialogue } = scenario;
+
+  const [history, setHistory] = useState<Message[]>(() => initialHistory(scenario));
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [completed, setCompleted] = useState(false);
   const [pickedCount, setPickedCount] = useState(0);
@@ -47,16 +60,24 @@ export default function PracticeCafeOrder() {
     }
 
     const nextNode = dialogue[choice.next];
-    setHistory([...nextHistory, { speaker: "ai", line: nextNode.aiLine }]);
-    setCurrentNodeId(choice.next);
+    setHistory(nextNode.aiLine ? [...nextHistory, { speaker: "ai", line: nextNode.aiLine }] : nextHistory);
+
+    if (nextNode.choices.length === 0) {
+      setCompleted(true);
+    } else {
+      setCurrentNodeId(choice.next);
+    }
   };
 
   const handleRestart = () => {
-    setHistory([{ speaker: "ai", line: dialogue.start.aiLine }]);
+    setHistory(initialHistory(scenario));
     setCurrentNodeId("start");
     setCompleted(false);
     setPickedCount(0);
   };
+
+  const Icon = scenario.icon;
+  const stepNow = Math.min(scenario.stepIndex(currentNodeId) + 1, scenario.totalSteps);
 
   return (
     <div className="chat-shell">
@@ -66,11 +87,11 @@ export default function PracticeCafeOrder() {
           <span>{t("홈으로", "Home")}</span>
         </Link>
         <div className="chat-title">
-          <Coffee size={18} />
-          <span>{t("카페에서 음료 주문하기", "Ordering a Drink at a Café")}</span>
+          <Icon size={18} />
+          <span>{t(scenario.ko.title, scenario.en.title)}</span>
         </div>
         <span className="chat-progress">
-          {Math.min(stepIndex(currentNodeId) + 1, TOTAL_STEPS)}/{TOTAL_STEPS}
+          {stepNow}/{scenario.totalSteps}
         </span>
       </header>
 
@@ -117,8 +138,8 @@ export default function PracticeCafeOrder() {
             <h2>{t("대화를 완료했습니다!", "You finished the conversation!")}</h2>
             <p>
               {t(
-                `카페 주문 대화에서 ${pickedCount}번의 응답을 선택하며 대화를 이어갔습니다. 다음 버전에서는 이 자리에 발음·표현·현지 말투에 대한 AI 피드백이 표시됩니다.`,
-                `You carried the cafe-order conversation through ${pickedCount} responses. In the next version, this is where AI feedback on pronunciation, phrasing, and local tone will appear.`
+                `이 대화에서 ${pickedCount}번의 응답을 선택하며 흐름을 이어갔습니다. 다음 버전에서는 이 자리에 발음·표현·현지 말투에 대한 AI 피드백이 표시됩니다.`,
+                `You carried this conversation through ${pickedCount} responses. In the next version, this is where AI feedback on pronunciation, phrasing, and local tone will appear.`
               )}
             </p>
             <div className="chat-complete-actions">
@@ -126,8 +147,8 @@ export default function PracticeCafeOrder() {
                 <RotateCcw size={17} />
                 {t("다시 해보기", "Try Again")}
               </button>
-              <Link href="/" className="text-link chat-home-link">
-                {t("홈으로 돌아가기", "Back to Home")}
+              <Link href="/practice" className="text-link chat-home-link">
+                {t("다른 시나리오 보기", "Browse other scenarios")}
               </Link>
             </div>
           </div>
