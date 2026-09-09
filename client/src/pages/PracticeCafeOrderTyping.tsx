@@ -1,10 +1,15 @@
 /**
  * Prototype variant B: same scripted dialogue as PracticeCafeOrder, but the
- * learner types the pinyin themselves instead of tapping a pre-written
- * choice — a production task rather than a recognition task, closer to what
- * speaking practice will feel like once a speech API is wired in.
+ * learner types their own response instead of tapping a pre-written choice.
+ *
+ * Important: real conversation has no single correct sentence, so this never
+ * blocks progress. Typing anything reasonable always advances the dialogue —
+ * the scripted line is shown only as a reference example, and is highlighted
+ * as "close to a common phrasing" when the input resembles it, never as the
+ * one accepted answer. Learners can also just tap a reference example
+ * directly at any time without typing at all.
  */
-import { ArrowLeft, Check, Coffee, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, Check, Coffee, RotateCcw } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "wouter";
 
@@ -20,10 +25,10 @@ import {
 const BRAND_MARK = "/brand-mark.svg";
 const MATCH_THRESHOLD = 0.72;
 
-interface Message {
-  speaker: "ai" | "learner";
-  line: Line;
-}
+type Message =
+  | { speaker: "ai"; line: Line }
+  | { speaker: "learner"; line: Line; matched: boolean }
+  | { speaker: "learner-free"; freeText: string; reference: Line };
 
 function normalizePinyin(value: string): string {
   return value
@@ -73,47 +78,45 @@ export default function PracticeCafeOrderTyping() {
   const [history, setHistory] = useState<Message[]>([{ speaker: "ai", line: dialogue.start.aiLine }]);
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [completed, setCompleted] = useState(false);
-  const [attemptCount, setAttemptCount] = useState(0);
-  const [correctFirstTry, setCorrectFirstTry] = useState(0);
+  const [typedCount, setTypedCount] = useState(0);
+  const [matchedCount, setMatchedCount] = useState(0);
   const [inputValue, setInputValue] = useState("");
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
-  const [showReveal, setShowReveal] = useState(false);
-  const [hasRetried, setHasRetried] = useState(false);
 
   const currentNode = dialogue[currentNodeId];
 
-  const advance = (choice: Choice) => {
-    const nextHistory: Message[] = [...history, { speaker: "learner", line: choice.line }];
+  const finishStep = (nextId: string, nextHistory: Message[]) => {
     setInputValue("");
-    setFeedback(null);
-    setShowReveal(false);
-    setHasRetried(false);
 
-    if (choice.next === "end") {
+    if (nextId === "end") {
       setHistory(nextHistory);
       setCompleted(true);
       return;
     }
 
-    const nextNode = dialogue[choice.next];
+    const nextNode = dialogue[nextId];
     setHistory([...nextHistory, { speaker: "ai", line: nextNode.aiLine }]);
-    setCurrentNodeId(choice.next);
+    setCurrentNodeId(nextId);
+  };
+
+  const handleExampleClick = (choice: Choice) => {
+    finishStep(choice.next, [...history, { speaker: "learner", line: choice.line, matched: true }]);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!inputValue.trim()) return;
+    const text = inputValue.trim();
+    if (!text) return;
 
-    setAttemptCount(count => count + 1);
-    const { choice, score } = findBestMatch(inputValue, currentNode.choices);
+    setTypedCount(count => count + 1);
+    const { choice, score } = findBestMatch(text, currentNode.choices);
 
     if (score >= MATCH_THRESHOLD) {
-      if (!hasRetried) setCorrectFirstTry(count => count + 1);
-      setFeedback("correct");
-      window.setTimeout(() => advance(choice), 550);
+      setMatchedCount(count => count + 1);
+      finishStep(choice.next, [...history, { speaker: "learner", line: choice.line, matched: true }]);
     } else {
-      setFeedback("incorrect");
-      setHasRetried(true);
+      // Never block: accept the learner's own phrasing and move on, showing
+      // the closest scripted line as a reference, not as "the right answer".
+      finishStep(choice.next, [...history, { speaker: "learner-free", freeText: text, reference: choice.line }]);
     }
   };
 
@@ -121,12 +124,9 @@ export default function PracticeCafeOrderTyping() {
     setHistory([{ speaker: "ai", line: dialogue.start.aiLine }]);
     setCurrentNodeId("start");
     setCompleted(false);
-    setAttemptCount(0);
-    setCorrectFirstTry(0);
+    setTypedCount(0);
+    setMatchedCount(0);
     setInputValue("");
-    setFeedback(null);
-    setShowReveal(false);
-    setHasRetried(false);
   };
 
   return (
@@ -153,70 +153,78 @@ export default function PracticeCafeOrderTyping() {
         <img src={BRAND_MARK} alt="" />
         <p>
           {t(
-            "프로토타입 안내(타이핑형): 선택지를 누르는 대신, 병음을 직접 입력해서 말해보는 방식입니다. 성조 기호 없이 입력해도 인식됩니다. 예: 'da bei xiexie'",
-            "Prototype note (typing mode): instead of tapping a choice, type the pinyin yourself. Tone marks aren't required — e.g. 'da bei xiexie' still works."
+            "프로토타입 안내(타이핑형): 실제 대화에는 정답이 하나만 있지 않습니다. 병음으로 자유롭게 입력하시면 그대로 대화가 이어지고, 아래 예시 표현은 참고용입니다 — 예시를 그대로 입력하지 않아도 다음 단계로 진행됩니다.",
+            "Prototype note (typing mode): real conversation never has just one correct sentence. Type your own response in pinyin and the dialogue moves on regardless — the example below is just a reference, not a required answer."
           )}
         </p>
       </div>
 
       <main className="chat-main">
-        {history.map((message, index) => (
-          <div key={index} className={`chat-bubble-row ${message.speaker}`}>
-            <div className="chat-bubble">
-              <strong>{message.line.zh}</strong>
-              <small className="chat-pinyin">{message.line.pinyin}</small>
-              <small className="chat-translation">{t(message.line.ko, message.line.en)}</small>
+        {history.map((message, index) => {
+          if (message.speaker === "ai" || message.speaker === "learner") {
+            return (
+              <div key={index} className={`chat-bubble-row ${message.speaker === "ai" ? "ai" : "learner"}`}>
+                <div className="chat-bubble">
+                  {message.speaker === "learner" && message.matched && (
+                    <span className="chat-bubble-tag">
+                      <Check size={12} />
+                      {t("예시 표현과 비슷해요", "Close to the example")}
+                    </span>
+                  )}
+                  <strong>{message.line.zh}</strong>
+                  <small className="chat-pinyin">{message.line.pinyin}</small>
+                  <small className="chat-translation">{t(message.line.ko, message.line.en)}</small>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div key={index} className="chat-bubble-row learner">
+              <div className="chat-bubble chat-bubble-free">
+                <span className="chat-bubble-tag">{t("자유 표현", "Your own phrasing")}</span>
+                <strong className="chat-free-text">{message.freeText}</strong>
+                <div className="chat-reference">
+                  <span>{t("참고 표현", "Reference")}</span>
+                  <small>{message.reference.zh}</small>
+                  <small className="chat-pinyin">{message.reference.pinyin}</small>
+                  <small className="chat-translation">{t(message.reference.ko, message.reference.en)}</small>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {!completed && (
           <div className="chat-type-area">
-            <span className="chat-choices-label">{t("병음으로 말해보세요", "Say it in pinyin")}</span>
+            <span className="chat-choices-label">{t("병음으로 자유롭게 말해보세요", "Say it in pinyin, your own way")}</span>
             <form className="chat-input-row" onSubmit={handleSubmit}>
               <input
                 className="chat-input"
                 value={inputValue}
-                onChange={event => {
-                  setInputValue(event.target.value);
-                  if (feedback) setFeedback(null);
-                }}
+                onChange={event => setInputValue(event.target.value)}
                 placeholder={t("예: da bei xiexie", "e.g. da bei xiexie")}
                 autoComplete="off"
                 spellCheck={false}
               />
               <button type="submit" className="chat-check-button">
-                {t("확인", "Check")}
+                {t("말하기", "Say it")}
               </button>
             </form>
 
-            {feedback === "correct" && (
-              <div className="chat-feedback correct">
-                <Check size={16} />
-                {t("정확해요!", "That's right!")}
-              </div>
-            )}
-            {feedback === "incorrect" && (
-              <div className="chat-feedback incorrect">
-                <X size={16} />
-                <span>{t("다시 한 번 시도해보세요.", "Give it another try.")}</span>
-                <button type="button" className="chat-reveal-link" onClick={() => setShowReveal(true)}>
-                  {t("정답 보기", "Show the answer")}
-                </button>
-              </div>
-            )}
-
-            {showReveal && (
-              <div className="chat-choices chat-reveal-list">
+            <div className="chat-examples">
+              <span className="chat-examples-label">
+                {t("또는 예시 표현을 눌러 바로 진행하세요", "Or tap an example to move on directly")}
+              </span>
+              <div className="chat-choices">
                 {currentNode.choices.map(choice => (
-                  <button key={choice.id} className="chat-choice" onClick={() => advance(choice)}>
+                  <button key={choice.id} className="chat-choice" onClick={() => handleExampleClick(choice)}>
                     <span className="chat-choice-zh">{choice.line.zh}</span>
                     <span className="chat-choice-pinyin">{choice.line.pinyin}</span>
                     <span className="chat-choice-translation">{t(choice.line.ko, choice.line.en)}</span>
                   </button>
                 ))}
               </div>
-            )}
+            </div>
           </div>
         )}
 
@@ -225,8 +233,8 @@ export default function PracticeCafeOrderTyping() {
             <h2>{t("대화를 완료했습니다!", "You finished the conversation!")}</h2>
             <p>
               {t(
-                `총 ${attemptCount}번 입력해서 ${correctFirstTry}번은 한 번에 맞혔습니다. 다음 버전에서는 이 자리에 발음·표현·현지 말투에 대한 AI 피드백이 표시됩니다.`,
-                `You typed ${attemptCount} answers and got ${correctFirstTry} right on the first try. In the next version, this is where AI feedback on pronunciation, phrasing, and local tone will appear.`
+                `직접 입력한 표현 ${typedCount}개 중 ${matchedCount}개가 예시 표현과 비슷했습니다. 다양하게 말해도 대화가 자연스럽게 이어진다는 걸 확인하는 게 이 프로토타입의 목적입니다. 다음 버전에서는 이 자리에 발음·표현·현지 말투에 대한 AI 피드백이 표시됩니다.`,
+                `${matchedCount} of your ${typedCount} typed responses were close to the example phrasing. The point of this prototype is to show the conversation flows naturally no matter how you phrase it. In the next version, this is where AI feedback on pronunciation, phrasing, and local tone will appear.`
               )}
             </p>
             <div className="chat-complete-actions">

@@ -81,8 +81,8 @@ export default function PracticeCafeOrder() {
         <img src={BRAND_MARK} alt="" />
         <p>
           {t(
-            "프로토타입 안내: 지금은 실제 음성 없이, 미리 검수된 대화 스크립트를 선택지로 눌러 진행하는 텍스트 버전입니다. AI 음성 인식·발음 평가는 준비 중입니다.",
-            "Prototype note: this is a text-only version — no live voice yet. You're stepping through a reviewed dialogue script by tapping choices. AI speech recognition and pronunciation feedback are still in progress."
+            "프로토타입 안내: 지금은 실제 음성 없이, 미리 검수된 대화 예시를 선택지로 눌러 진행하는 텍스트 버전입니다. 아래 표현들은 참고 예시일 뿐 실제로는 이 외에도 다양하게 말할 수 있습니다. AI 음성 인식·발음 평가는 준비 중입니다.",
+            "Prototype note: this is a text-only version — no live voice yet. You're stepping through reviewed example dialogue by tapping choices. These are just reference examples — real conversation has many other ways to say the same thing. AI speech recognition and pronunciation feedback are still in progress."
           )}
         </p>
       </div>
