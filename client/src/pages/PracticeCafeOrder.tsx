@@ -1,8 +1,9 @@
 /**
  * Prototype: text-based conversation practice, no voice yet.
- * Scripted branching dialogue (matches the reviewed MVP scenario script)
- * rather than freeform LLM chat — validates the interaction shape before
- * a speech API is wired in.
+ * The scripted lines are reference examples of how this exchange could go,
+ * not a required script — tapping one just moves the conversation forward,
+ * the way real conversation would. Validates the interaction shape before
+ * a speech API and a real adaptive AI are wired in.
  */
 import { ArrowLeft, Coffee, RotateCcw } from "lucide-react";
 import { useState } from "react";
@@ -73,16 +74,12 @@ export default function PracticeCafeOrder() {
         </span>
       </header>
 
-      <Link href="/practice/cafe-order-typing" className="chat-mode-switch">
-        {t("다른 방식(타이핑형)으로 보기 →", "See the typing-mode version →")}
-      </Link>
-
       <div className="chat-note">
         <img src={BRAND_MARK} alt="" />
         <p>
           {t(
-            "프로토타입 안내: 지금은 실제 음성 없이, 미리 검수된 대화 예시를 선택지로 눌러 진행하는 텍스트 버전입니다. 아래 표현들은 참고 예시일 뿐 실제로는 이 외에도 다양하게 말할 수 있습니다. AI 음성 인식·발음 평가는 준비 중입니다.",
-            "Prototype note: this is a text-only version — no live voice yet. You're stepping through reviewed example dialogue by tapping choices. These are just reference examples — real conversation has many other ways to say the same thing. AI speech recognition and pronunciation feedback are still in progress."
+            "프로토타입 안내: 이 대화는 정해진 정답이 아니라, 실제 상황에서 참고할 수 있는 예시 표현입니다. 반드시 이대로 말해야 하는 건 아니고, 다른 표현을 써도 전혀 문제없습니다. 지금은 예시를 눌러 흐름을 확인하는 텍스트 버전이며, 다음 단계에서는 AI가 여러분이 실제로 하는 말에 맞춰 자연스럽게 대화를 이어가도록 발전시킬 예정입니다.",
+            "Prototype note: these lines aren't the one correct answer — they're example phrasing you could use in the real situation. You're free to say it differently. This text version lets you tap examples to see how the flow works; the next step is an AI that actually adapts to whatever you say."
           )}
         </p>
       </div>
@@ -102,8 +99,8 @@ export default function PracticeCafeOrder() {
           <div className="chat-choices">
             <span className="chat-choices-label">
               {currentNode.choices.length > 1
-                ? t("이렇게 말해보세요 — 하나를 골라주세요", "Say it this way — pick one")
-                : t("이렇게 말해보세요", "Say it this way")}
+                ? t("이렇게 말할 수도 있어요 — 예시 중 하나를 눌러보세요", "Some ways you could say it — tap one example")
+                : t("이렇게 말할 수도 있어요", "One way you could say it")}
             </span>
             {currentNode.choices.map(choice => (
               <button key={choice.id} className="chat-choice" onClick={() => handleChoice(choice)}>
