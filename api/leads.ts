@@ -21,6 +21,18 @@ const leadSchema = z.object({
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
+function normalizePrivateKey(raw: string): string {
+  let key = raw.trim();
+  // Strip surrounding quotes in case they were pasted along with the value.
+  if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+    key = key.slice(1, -1).trim();
+  }
+  // Env vars/UIs often store the key with literal "\n" sequences instead of
+  // real newlines; restore them. Leaves already-real newlines untouched.
+  key = key.replace(/\\n/g, "\n");
+  return key;
+}
+
 function base64url(input: Buffer | string): string {
   return Buffer.from(input)
     .toString("base64")
@@ -70,7 +82,12 @@ async function appendRowToSheet(row: string[]): Promise<void> {
     throw new Error("google_sheets_not_configured");
   }
 
-  const privateKey = privateKeyRaw.replace(/\\n/g, "\n");
+  const privateKey = normalizePrivateKey(privateKeyRaw);
+  if (!privateKey.includes("BEGIN PRIVATE KEY") || !privateKey.includes("END PRIVATE KEY")) {
+    throw new Error(
+      "google_private_key_malformed: GOOGLE_PRIVATE_KEY does not look like a PEM key after normalization"
+    );
+  }
   const accessToken = await getAccessToken(clientEmail, privateKey);
 
   const range = `${sheetName}!A:A`;
