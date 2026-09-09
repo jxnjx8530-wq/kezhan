@@ -7,6 +7,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import PracticeCafeOrder from "./pages/PracticeCafeOrder";
+import PracticeCafeOrderTyping from "./pages/PracticeCafeOrderTyping";
 
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/practice/cafe-order"} component={PracticeCafeOrder} />
+      <Route path={"/practice/cafe-order-typing"} component={PracticeCafeOrderTyping} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
