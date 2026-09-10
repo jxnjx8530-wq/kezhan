@@ -715,6 +715,28 @@ p {
   font-family: "Noto Serif KR", serif;
   font-size: 14px;
 }
+.practice-preview-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 16px 20px;
+  background: rgb(255 250 244 / 6%);
+  border: 1px solid rgb(255 250 244 / 20%);
+  border-radius: 3px;
+}
+.practice-preview-cta p {
+  margin: 0;
+  max-width: 460px;
+  color: rgb(255 250 244 / 80%);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.practice-preview-cta .button {
+  flex-shrink: 0;
+}
 .scenario-layout {
   display: grid;
   grid-template-columns: 1.08fr 0.92fr;

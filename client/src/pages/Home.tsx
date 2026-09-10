@@ -61,6 +61,7 @@ import {
 } from "lucide-react";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Link } from "wouter";
 
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 import {
@@ -1082,6 +1083,18 @@ export default function Home() {
                   )}
                 </p>
               </div>
+            </motion.div>
+            <motion.div {...reveal} className="practice-preview-cta">
+              <p>
+                {t(
+                  "먼저 40개 대화 시나리오를 텍스트로 훑어볼 수 있는 미리보기가 준비되어 있습니다.",
+                  "A text preview of all 40 conversation scenarios is ready to browse first."
+                )}
+              </p>
+              <Link href="/practice" target="_blank" className="button button-line-light">
+                {t("시나리오 미리보기 열기", "Open the Scenario Preview")}
+                <ArrowUpRight size={16} />
+              </Link>
             </motion.div>
             <div className="scenario-layout">
               <motion.figure {...reveal} className="scenario-feature">
