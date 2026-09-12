@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Link, useParams } from "wouter";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getScenario, type Choice, type Line, type ScenarioData } from "@/data/scenarios";
+import { getScenario, type Choice, type Line, type ScenarioWithImage } from "@/data/scenarios";
 import NotFound from "@/pages/NotFound";
 
 const BRAND_MARK = "/brand-mark.svg";
@@ -31,12 +31,12 @@ export default function PracticeScenario() {
   return <ScenarioChat scenario={scenario} />;
 }
 
-function initialHistory(scenario: ScenarioData): Message[] {
+function initialHistory(scenario: ScenarioWithImage): Message[] {
   const aiLine = scenario.dialogue.start.aiLine;
   return aiLine ? [{ speaker: "ai", line: aiLine }] : [];
 }
 
-function ScenarioChat({ scenario }: { scenario: ScenarioData }) {
+function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
   const { lang } = useLanguage();
   const t = (ko: string, en: string) => (lang === "ko" ? ko : en);
 
@@ -94,6 +94,10 @@ function ScenarioChat({ scenario }: { scenario: ScenarioData }) {
           {stepNow}/{scenario.totalSteps}
         </span>
       </header>
+
+      <div className="chat-scene">
+        <img src={scenario.image} alt={t(scenario.ko.title, scenario.en.title)} />
+      </div>
 
       <div className="chat-note">
         <img src={BRAND_MARK} alt="" />

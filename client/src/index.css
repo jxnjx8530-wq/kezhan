@@ -2139,6 +2139,18 @@ p {
   font-family: "Source Serif 4", serif;
   font-size: 13px;
 }
+.chat-scene {
+  overflow: hidden;
+  width: 100%;
+  height: 240px;
+}
+.chat-scene img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
 .chat-note {
   display: flex;
   gap: 10px;
@@ -2338,6 +2350,9 @@ p {
 @media (max-width: 620px) {
   .chat-bubble {
     max-width: 88%;
+  }
+  .chat-scene {
+    height: 160px;
   }
 }
 
