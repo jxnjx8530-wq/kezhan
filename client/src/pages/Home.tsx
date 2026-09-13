@@ -1835,7 +1835,6 @@ export default function Home() {
               ) : (
                 <div className="scenario-dialog-list">
                   {dialogTheme.scenarios.map((scenario, index) => {
-                    const Icon = scenario.icon;
                     return (
                       <button
                         key={scenario.ko.title}
@@ -1848,7 +1847,9 @@ export default function Home() {
                         <span className="scenario-number">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <Icon size={19} />
+                        <span className="scenario-thumb">
+                          <img src={`/images/scenarios/${scenario.slug}.webp`} alt="" />
+                        </span>
                         <span>
                           <strong>{t(scenario.ko.title, scenario.en.title)}</strong>
                           <small>{t(scenario.ko.desc, scenario.en.desc)}</small>

@@ -967,7 +967,7 @@ p {
 }
 .scenario-dialog-row {
   display: grid;
-  grid-template-columns: 28px 22px 1fr 18px;
+  grid-template-columns: 28px 44px 1fr 18px;
   align-items: center;
   gap: 10px;
   width: 100%;
