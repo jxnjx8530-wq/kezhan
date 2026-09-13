@@ -2141,15 +2141,16 @@ p {
 }
 .chat-scene {
   overflow: hidden;
-  width: 100%;
-  height: 240px;
+  width: min(900px, 100%);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
 }
 .chat-scene img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center center;
 }
 .chat-note {
   display: flex;
@@ -2350,9 +2351,6 @@ p {
 @media (max-width: 620px) {
   .chat-bubble {
     max-width: 88%;
-  }
-  .chat-scene {
-    height: 160px;
   }
 }
 
