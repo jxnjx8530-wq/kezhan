@@ -95,52 +95,62 @@ const scenarioThemes = [
     scenarios: [
       {
         icon: Coffee,
+        slug: "cafe-order",
         ko: { title: "카페에서 음료 주문하기", desc: "음료를 고르고 사이즈까지 주문하기" },
         en: { title: "Ordering a Drink at a Café", desc: "Pick a drink and choose your size" },
       },
       {
         icon: CalendarClock,
+        slug: "restaurant-reservation",
         ko: { title: "식당 예약하기", desc: "인원과 시간을 정해 예약하고 변경하기" },
         en: { title: "Booking a Restaurant Table", desc: "Book a table, then change the time or add a request" },
       },
       {
         icon: ClipboardList,
+        slug: "restaurant-order",
         ko: { title: "식당에서 메뉴 주문하기", desc: "메뉴를 고르고 추가 주문하기" },
         en: { title: "Ordering Food at a Restaurant", desc: "Order a dish and add extras" },
       },
       {
         icon: Flame,
+        slug: "spice-level",
         ko: { title: "맵기·간 조절 요청하기", desc: "맵기와 간을 취향대로 요청하기" },
         en: { title: "Adjusting Spice Level & Seasoning", desc: "Ask for spice level and seasoning your way" },
       },
       {
         icon: AlertTriangle,
+        slug: "allergy-check",
         ko: { title: "알레르기 있는 재료 물어보기", desc: "알레르기 재료를 확인하고 빼달라 요청하기" },
         en: { title: "Asking About Allergens", desc: "Check for allergens and ask to leave them out" },
       },
       {
         icon: Receipt,
+        slug: "bill-payment",
         ko: { title: "계산서 요청하고 결제하기", desc: "계산서를 요청하고 결제 방법 정하기" },
         en: { title: "Asking for the Bill and Paying", desc: "Ask for the bill and choose how to pay" },
       },
       {
         icon: PackageOpen,
+        slug: "takeout-order",
         ko: { title: "테이크아웃 주문하기", desc: "포장 주문하고 준비 시간 확인하기" },
         en: { title: "Ordering Food to Go", desc: "Order to go and check the wait time" },
       },
       {
         icon: Bike,
+        slug: "delivery-order",
         ko: { title: "배달 음식 주문하기", desc: "메뉴와 배달 주소를 전달하기" },
         en: { title: "Ordering Food Delivery", desc: "Order your food and give the delivery address" },
       },
       {
         icon: CookingPot,
+        slug: "street-food",
         recent: true,
         ko: { title: "길거리 음식 사 먹기", desc: "노점에서 맵기를 골라 주문하기" },
         en: { title: "Buying Street Food", desc: "Order at a stall and choose the spice level" },
       },
       {
         icon: IceCreamCone,
+        slug: "dessert-order",
         recent: true,
         ko: { title: "후식·디저트 추가 주문하기", desc: "추천을 받아 디저트 추가 주문하기" },
         en: { title: "Ordering Dessert", desc: "Get a recommendation and order dessert" },
@@ -154,52 +164,62 @@ const scenarioThemes = [
     scenarios: [
       {
         icon: MapPinned,
+        slug: "taxi",
         ko: { title: "택시 타고 목적지 말하기", desc: "목적지를 말하고 요금까지 계산하기" },
         en: { title: "Taking a Taxi and Giving a Destination", desc: "State your destination and pay the fare" },
       },
       {
         icon: Ticket,
+        slug: "train-ticket",
         ko: { title: "기차역에서 표 사기", desc: "행선지와 좌석을 정해 표 구매하기" },
         en: { title: "Buying a Train Ticket at the Station", desc: "Pick a destination and seat, then buy your ticket" },
       },
       {
         icon: PlaneTakeoff,
+        slug: "airport-checkin",
         ko: { title: "공항에서 체크인하기", desc: "수하물과 좌석을 안내받으며 체크인하기" },
         en: { title: "Checking In at the Airport", desc: "Check in while sorting out baggage and your seat" },
       },
       {
         icon: Route,
+        slug: "subway-transfer",
         ko: { title: "지하철 노선·환승 물어보기", desc: "환승 노선과 정거장 수를 확인하기" },
         en: { title: "Asking About Subway Lines & Transfers", desc: "Confirm the transfer line and number of stops" },
       },
       {
         icon: Bus,
+        slug: "bus-stop",
         ko: { title: "버스 정류장 위치 물어보기", desc: "정류장 위치와 배차 간격 물어보기" },
         en: { title: "Asking Where the Bus Stop Is", desc: "Ask where the stop is and how often buses come" },
       },
       {
         icon: Hotel,
+        slug: "hotel-checkin",
         ko: { title: "호텔 체크인하기", desc: "예약을 확인하고 객실 안내받기" },
         en: { title: "Checking Into a Hotel", desc: "Confirm your reservation and get room details" },
       },
       {
         icon: DoorOpen,
+        slug: "hotel-checkout",
         ko: { title: "호텔 체크아웃하기", desc: "정산을 확인하고 체크아웃하기" },
         en: { title: "Checking Out of a Hotel", desc: "Settle up and check out" },
       },
       {
         icon: MessageSquareWarning,
+        slug: "hotel-room-issue",
         ko: { title: "호텔 방에 문제 생겨서 요청하기", desc: "객실 문제를 알리고 해결 요청하기" },
         en: { title: "Reporting a Problem in Your Room", desc: "Report a room issue and ask it to be fixed" },
       },
       {
         icon: Car,
+        slug: "car-rental",
         recent: true,
         ko: { title: "렌터카 빌리기", desc: "대여 기간과 보험을 정해 차 빌리기" },
         en: { title: "Renting a Car", desc: "Choose a rental period and insurance" },
       },
       {
         icon: Signpost,
+        slug: "lost-directions",
         recent: true,
         ko: { title: "길 잃었을 때 길 묻기", desc: "지나가는 사람에게 길을 물어보기" },
         en: { title: "Asking for Directions When Lost", desc: "Ask a passerby for directions" },
@@ -213,52 +233,62 @@ const scenarioThemes = [
     scenarios: [
       {
         icon: Shirt,
+        slug: "clothing-size",
         ko: { title: "옷 가게에서 사이즈 물어보기", desc: "원하는 사이즈가 있는지 물어보기" },
         en: { title: "Asking About Sizes at a Clothing Store", desc: "Ask if your size is in stock" },
       },
       {
         icon: UserCheck,
+        slug: "try-on-clothes",
         ko: { title: "옷 입어보기 요청하기", desc: "탈의실에서 입어보고 사이즈 확인하기" },
         en: { title: "Asking to Try On Clothes", desc: "Try it on and check the fit" },
       },
       {
         icon: HandCoins,
+        slug: "haggling",
         ko: { title: "가격 흥정하기", desc: "가격을 흥정해 할인받기" },
         en: { title: "Haggling Over Price", desc: "Haggle your way to a discount" },
       },
       {
         icon: Receipt,
+        slug: "receipt-payment",
         ko: { title: "계산하고 영수증 받기", desc: "결제하고 영수증을 요청하기" },
         en: { title: "Paying and Getting a Receipt", desc: "Pay and ask for a receipt" },
       },
       {
         icon: Undo2,
+        slug: "refund-exchange",
         ko: { title: "환불·교환 요청하기", desc: "환불이나 교환을 요청하기" },
         en: { title: "Requesting a Refund or Exchange", desc: "Ask for a refund or an exchange" },
       },
       {
         icon: ShoppingBag,
+        slug: "convenience-store",
         ko: { title: "편의점에서 물건 사기", desc: "가격을 물어보고 물건 사기" },
         en: { title: "Buying Things at a Convenience Store", desc: "Ask the price and buy a few things" },
       },
       {
         icon: Store,
+        slug: "supermarket-location",
         ko: { title: "마트에서 물건 위치 물어보기", desc: "찾는 물건의 진열대 위치 물어보기" },
         en: { title: "Asking Where Items Are in a Supermarket", desc: "Ask which aisle an item is in" },
       },
       {
         icon: Star,
+        slug: "souvenir",
         ko: { title: "기념품 고르기", desc: "추천받아 기념품을 고르기" },
         en: { title: "Choosing a Souvenir", desc: "Get a recommendation and pick a souvenir" },
       },
       {
         icon: Gift,
+        slug: "gift-wrapping",
         recent: true,
         ko: { title: "선물 포장 요청하기", desc: "포장지 색과 카드를 정해 포장 요청하기" },
         en: { title: "Asking for Gift Wrapping", desc: "Choose wrapping paper and a card for a gift" },
       },
       {
         icon: Truck,
+        slug: "online-pickup",
         recent: true,
         ko: { title: "매장에서 온라인 주문 픽업하기", desc: "주문 번호로 물건을 확인하고 픽업하기" },
         en: { title: "Picking Up an Online Order In-Store", desc: "Verify your order number and pick it up" },
@@ -272,52 +302,62 @@ const scenarioThemes = [
     scenarios: [
       {
         icon: Pill,
+        slug: "pharmacy",
         ko: { title: "약국에서 약 사기", desc: "증상을 설명하고 약을 처방받기" },
         en: { title: "Buying Medicine at a Pharmacy", desc: "Describe your symptoms and get medicine" },
       },
       {
         icon: Stethoscope,
+        slug: "clinic-checkin",
         ko: { title: "병원 접수하고 증상 설명하기", desc: "접수하고 증상을 자세히 설명하기" },
         en: { title: "Checking In at a Clinic", desc: "Check in and describe your symptoms in detail" },
       },
       {
         icon: Scissors,
+        slug: "salon-booking",
         ko: { title: "미용실 예약하고 스타일 요청하기", desc: "예약하고 원하는 스타일 요청하기" },
         en: { title: "Booking a Salon Appointment", desc: "Book an appointment and describe your style" },
       },
       {
         icon: WashingMachine,
+        slug: "dry-cleaner",
         ko: { title: "세탁소에 옷 맡기기", desc: "얼룩 제거를 부탁하고 픽업일 정하기" },
         en: { title: "Dropping Off Clothes at the Dry Cleaner's", desc: "Ask about a stain and set a pickup date" },
       },
       {
         icon: Landmark,
+        slug: "bank-account",
         ko: { title: "은행에서 계좌 만들기", desc: "서류를 작성해 계좌를 개설하기" },
         en: { title: "Opening a Bank Account", desc: "Fill out a form to open an account" },
       },
       {
         icon: KeyRound,
+        slug: "real-estate",
         ko: { title: "부동산에서 집 문의하기", desc: "조건에 맞는 집을 문의하기" },
         en: { title: "Asking About Apartments", desc: "Ask about apartments that fit your needs" },
       },
       {
         icon: Dumbbell,
+        slug: "gym-signup",
         ko: { title: "헬스장 등록하기", desc: "이용 기간을 정해 회원 등록하기" },
         en: { title: "Signing Up at a Gym", desc: "Choose a membership length and sign up" },
       },
       {
         icon: HandHeart,
+        slug: "neighbor-greeting",
         ko: { title: "동네 이웃과 인사·소통하기", desc: "이웃과 인사하고 동네 정보 나누기" },
         en: { title: "Greeting and Chatting with a Neighbor", desc: "Greet a neighbor and swap local tips" },
       },
       {
         icon: PackageSearch,
+        slug: "lost-item",
         recent: true,
         ko: { title: "분실물 신고하기", desc: "분실 경위를 설명하고 신고하기" },
         en: { title: "Reporting a Lost Item", desc: "Explain what happened and report it lost" },
       },
       {
         icon: FileText,
+        slug: "government-office",
         recent: true,
         ko: { title: "공공기관에서 서류 문의하기", desc: "필요한 서류를 확인하고 신청하기" },
         en: { title: "Asking About Paperwork at a Government Office", desc: "Check the required documents and apply" },
@@ -1147,7 +1187,6 @@ export default function Home() {
                 </div>
                 <div className="scenario-rows">
                   {recentScenarios.map((scenario, index) => {
-                    const Icon = scenario.icon;
                     return (
                       <button
                         key={`${scenario.theme.key}-${scenario.ko.title}`}
@@ -1157,7 +1196,9 @@ export default function Home() {
                         <span className="scenario-number">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <Icon size={20} />
+                        <span className="scenario-thumb">
+                          <img src={`/images/scenarios/${scenario.slug}.webp`} alt="" />
+                        </span>
                         <span>
                           <strong>{t(scenario.ko.title, scenario.en.title)}</strong>
                           <small>
