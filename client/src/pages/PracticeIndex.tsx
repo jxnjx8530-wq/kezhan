@@ -44,8 +44,13 @@ export default function PracticeIndex() {
                 const Icon = scenario.icon;
                 return (
                   <Link key={scenario.slug} href={`/practice/${scenario.slug}`} className="practice-index-card">
-                    <Icon size={18} />
-                    <span>{t(scenario.ko.title, scenario.en.title)}</span>
+                    <span className="practice-index-thumb">
+                      <img src={scenario.image} alt="" />
+                    </span>
+                    <span className="practice-index-label">
+                      <Icon size={16} />
+                      <span>{t(scenario.ko.title, scenario.en.title)}</span>
+                    </span>
                   </Link>
                 );
               })}
