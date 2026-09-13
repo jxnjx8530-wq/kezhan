@@ -2141,8 +2141,9 @@ p {
 }
 .chat-scene {
   overflow: hidden;
-  width: min(900px, 100%);
-  margin: 0 auto;
+  width: min(420px, 100%);
+  margin: 16px auto 0;
+  border-radius: 3px;
   aspect-ratio: 16 / 9;
 }
 .chat-scene img {
