@@ -1,29 +1,46 @@
 /**
- * Scaffold only: no backend wired up yet. Not linked from the public site —
- * this exists so the real-product pages have a home to grow into, separate
- * from the marketing site's pages/ folder.
+ * Not linked from the public site yet. Uses Supabase auth once
+ * VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY are configured; falls back to
+ * a "not configured" toast so the page doesn't crash before then.
  */
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/lib/supabase";
 
 export default function Signup() {
   const { lang } = useLanguage();
   const t = (ko: string, en: string) => (lang === "ko" ? ko : en);
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    toast(t("아직 준비 중이에요", "Still under construction"), {
-      description: t(
-        "회원가입 기능은 다음 단계에서 실제로 연결할 예정이에요.",
-        "Signup isn't wired to a real backend yet — that's the next step."
-      ),
+    if (!supabase) {
+      toast(t("아직 준비 중이에요", "Still under construction"), {
+        description: t(
+          "Supabase 연결이 아직 설정되지 않았어요.",
+          "Supabase isn't connected yet."
+        ),
+      });
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await supabase.auth.signUp({ email, password });
+    setSubmitting(false);
+    if (error) {
+      toast(t("가입 실패", "Signup failed"), { description: error.message });
+      return;
+    }
+    toast(t("가입 완료!", "Account created!"), {
+      description: t("이메일로 온 확인 링크를 눌러주세요.", "Check your email to confirm your account."),
     });
+    setLocation("/login");
   };
 
   return (
@@ -42,8 +59,8 @@ export default function Signup() {
       <div className="chat-note">
         <p>
           {t(
-            "프로토타입 안내: 화면만 먼저 만든 단계입니다. 실제로 계정이 만들어지지는 않아요.",
-            "Prototype note: this is a screen-only draft. No account is actually created yet."
+            "안내: 실제 계정을 만듭니다. 아직 홈페이지 메뉴에는 연결되어 있지 않은 개발 중인 화면이에요.",
+            "Note: this creates a real account. Not yet linked from the site's main menu — this page is still under development."
           )}
         </p>
       </div>
@@ -70,8 +87,8 @@ export default function Signup() {
               placeholder="********"
             />
           </label>
-          <button type="submit" className="button button-solid form-submit">
-            {t("가입하기", "Sign up")}
+          <button type="submit" className="button button-solid form-submit" disabled={submitting}>
+            {submitting ? t("가입하는 중...", "Signing up...") : t("가입하기", "Sign up")}
           </button>
         </form>
       </main>
