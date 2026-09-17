@@ -1180,8 +1180,8 @@ export default function Home() {
                   </span>
                   <p>
                     {t(
-                      "채를 클릭하면 전체 목록이 새 창에서 열립니다.",
-                      "Click a wing to open its full list in a new window."
+                      "채를 클릭하면 전체 목록이 팝업으로 열립니다.",
+                      "Click a wing to open its full list in a popup."
                     )}
                   </p>
                 </div>
