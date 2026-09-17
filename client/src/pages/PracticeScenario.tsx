@@ -10,7 +10,7 @@
  * learner's own phrasing, with the closest line shown only as a reference.
  */
 import { ArrowLeft, Mic, RotateCcw, Volume2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 
@@ -109,7 +109,6 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const [listening, setListening] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentNode = dialogue[currentNodeId];
   const speechSupported = Boolean(getSpeechRecognitionCtor());
@@ -173,32 +172,21 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
     recognition.start();
   };
 
-  const playLine = async (text: string, index: number) => {
-    try {
-      setSpeakingIndex(index);
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+  const playLine = (text: string, index: number) => {
+    if (!("speechSynthesis" in window)) {
+      toast(t("음성 재생 미지원", "Audio playback not supported"), {
+        description: t("이 브라우저는 음성 합성을 지원하지 않아요. 크롬을 사용해보세요.", "This browser doesn't support speech synthesis. Try Chrome."),
       });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ? `${res.status} ${body.error}` : `tts_failed_${res.status}`);
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audioRef.current = audio;
-      audio.onended = () => {
-        setSpeakingIndex(null);
-        URL.revokeObjectURL(url);
-      };
-      await audio.play();
-    } catch (err) {
-      setSpeakingIndex(null);
-      const message = err instanceof Error ? err.message : "unknown_error";
-      toast(t("음성 재생 실패", "Audio playback failed"), { description: message });
+      return;
     }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "zh-CN";
+    utterance.rate = 0.92;
+    utterance.onend = () => setSpeakingIndex(null);
+    utterance.onerror = () => setSpeakingIndex(null);
+    setSpeakingIndex(index);
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleRestart = () => {
