@@ -12,6 +12,7 @@
 import { ArrowLeft, Mic, RotateCcw, Volume2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useParams } from "wouter";
+import { toast } from "sonner";
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getScenario, type Choice, type Line, type ScenarioWithImage } from "@/data/scenarios";
@@ -180,7 +181,10 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-      if (!res.ok) throw new Error("tts_failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ? `${res.status} ${body.error}` : `tts_failed_${res.status}`);
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
@@ -190,8 +194,10 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
         URL.revokeObjectURL(url);
       };
       await audio.play();
-    } catch {
+    } catch (err) {
       setSpeakingIndex(null);
+      const message = err instanceof Error ? err.message : "unknown_error";
+      toast(t("음성 재생 실패", "Audio playback failed"), { description: message });
     }
   };
 
