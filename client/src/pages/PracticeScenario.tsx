@@ -1,12 +1,16 @@
 /**
- * Generic text-based conversation practice, no voice yet. Renders whichever
- * scenario the slug points to. The scripted lines are reference examples of
- * how the exchange could go, not a required script — tapping one just moves
- * the conversation forward, the way real conversation would. Validates the
- * interaction shape before a speech API and a real adaptive AI are wired in.
+ * Generic conversation practice, now with voice: the AI's lines can be
+ * played aloud (ElevenLabs TTS via /api/tts), and the learner can speak
+ * their reply instead of tapping one (browser Web Speech API STT). Renders
+ * whichever scenario the slug points to. The scripted lines are reference
+ * examples of how the exchange could go, not a required script — speaking
+ * or tapping one just moves the conversation forward, the way real
+ * conversation would. Spoken input is never blocked on an exact match: a
+ * close match advances as that choice, anything else still advances as the
+ * learner's own phrasing, with the closest line shown only as a reference.
  */
-import { ArrowLeft, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Mic, RotateCcw, Volume2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { Link, useParams } from "wouter";
 
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,10 +18,65 @@ import { getScenario, type Choice, type Line, type ScenarioWithImage } from "@/d
 import NotFound from "@/pages/NotFound";
 
 const BRAND_MARK = "/brand-mark.svg";
+const VOICE_MATCH_THRESHOLD = 0.6;
 
-interface Message {
-  speaker: "ai" | "learner";
-  line: Line;
+type Message =
+  | { speaker: "ai"; line: Line }
+  | { speaker: "learner"; line: Line; matched?: boolean }
+  | { speaker: "learner-voice"; heard: string; reference: Line };
+
+interface SpeechRecognitionResultLike {
+  results: { 0: { transcript: string } }[];
+}
+
+interface SpeechRecognitionLike {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: ((event: SpeechRecognitionResultLike) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+}
+
+function getSpeechRecognitionCtor(): (new () => SpeechRecognitionLike) | undefined {
+  if (typeof window === "undefined") return undefined;
+  const w = window as unknown as Record<string, unknown>;
+  return (w.SpeechRecognition || w.webkitSpeechRecognition) as (new () => SpeechRecognitionLike) | undefined;
+}
+
+function normalizeZh(value: string): string {
+  return value.replace(/[，。！？、,.!?\s]/g, "");
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const dp: number[][] = Array.from({ length: rows }, () => new Array(cols).fill(0));
+  for (let i = 0; i < rows; i++) dp[i][0] = i;
+  for (let j = 0; j < cols; j++) dp[0][j] = j;
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[rows - 1][cols - 1];
+}
+
+function similarity(a: string, b: string): number {
+  const maxLen = Math.max(a.length, b.length);
+  if (maxLen === 0) return 1;
+  return 1 - levenshteinDistance(a, b) / maxLen;
+}
+
+function findBestVoiceMatch(heard: string, choices: Choice[]): { choice: Choice; score: number } {
+  const normalizedHeard = normalizeZh(heard);
+  let best = { choice: choices[0], score: -1 };
+  for (const choice of choices) {
+    const score = similarity(normalizedHeard, normalizeZh(choice.line.zh));
+    if (score > best.score) best = { choice, score };
+  }
+  return best;
 }
 
 export default function PracticeScenario() {
@@ -46,26 +105,93 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [completed, setCompleted] = useState(false);
   const [pickedCount, setPickedCount] = useState(0);
+  const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
+  const [listening, setListening] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentNode = dialogue[currentNodeId];
+  const speechSupported = Boolean(getSpeechRecognitionCtor());
 
-  const handleChoice = (choice: Choice) => {
-    const nextHistory: Message[] = [...history, { speaker: "learner", line: choice.line }];
-    setPickedCount(count => count + 1);
-
-    if (choice.next === "end") {
+  const advance = (nextId: string, nextHistory: Message[]) => {
+    if (nextId === "end") {
       setHistory(nextHistory);
       setCompleted(true);
       return;
     }
 
-    const nextNode = dialogue[choice.next];
+    const nextNode = dialogue[nextId];
     setHistory(nextNode.aiLine ? [...nextHistory, { speaker: "ai", line: nextNode.aiLine }] : nextHistory);
 
     if (nextNode.choices.length === 0) {
       setCompleted(true);
     } else {
-      setCurrentNodeId(choice.next);
+      setCurrentNodeId(nextId);
+    }
+  };
+
+  const handleChoice = (choice: Choice) => {
+    setPickedCount(count => count + 1);
+    advance(choice.next, [...history, { speaker: "learner", line: choice.line, matched: true }]);
+  };
+
+  const handleVoiceResult = (heard: string) => {
+    setPickedCount(count => count + 1);
+    const { choice, score } = findBestVoiceMatch(heard, currentNode.choices);
+
+    if (score >= VOICE_MATCH_THRESHOLD) {
+      advance(choice.next, [...history, { speaker: "learner", line: choice.line, matched: true }]);
+    } else {
+      // Never block: accept whatever was said and move on, showing the
+      // closest scripted line as a reference, not as "the right answer".
+      advance(choice.next, [...history, { speaker: "learner-voice", heard, reference: choice.line }]);
+    }
+  };
+
+  const handleMicClick = () => {
+    const Ctor = getSpeechRecognitionCtor();
+    if (!Ctor) {
+      setVoiceError(t("이 브라우저는 음성 인식을 지원하지 않아요. 크롬을 사용해보세요.", "This browser doesn't support speech recognition. Try Chrome."));
+      return;
+    }
+    setVoiceError(null);
+    const recognition = new Ctor();
+    recognition.lang = "zh-CN";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = event => {
+      const transcript = event.results[0][0].transcript;
+      handleVoiceResult(transcript);
+    };
+    recognition.onerror = () => {
+      setListening(false);
+      setVoiceError(t("음성을 인식하지 못했어요. 다시 시도해보세요.", "Couldn't catch that. Please try again."));
+    };
+    recognition.onend = () => setListening(false);
+    setListening(true);
+    recognition.start();
+  };
+
+  const playLine = async (text: string, index: number) => {
+    try {
+      setSpeakingIndex(index);
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error("tts_failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => {
+        setSpeakingIndex(null);
+        URL.revokeObjectURL(url);
+      };
+      await audio.play();
+    } catch {
+      setSpeakingIndex(null);
     }
   };
 
@@ -74,6 +200,7 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
     setCurrentNodeId("start");
     setCompleted(false);
     setPickedCount(0);
+    setVoiceError(null);
   };
 
   const Icon = scenario.icon;
@@ -103,29 +230,71 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
         <img src={BRAND_MARK} alt="" />
         <p>
           {t(
-            "프로토타입 안내: 이 대화는 정해진 정답이 아니라, 실제 상황에서 참고할 수 있는 예시 표현입니다. 반드시 이대로 말해야 하는 건 아니고, 다른 표현을 써도 전혀 문제없습니다. 지금은 예시를 눌러 흐름을 확인하는 텍스트 버전이며, 다음 단계에서는 AI가 여러분이 실제로 하는 말에 맞춰 자연스럽게 대화를 이어가도록 발전시킬 예정입니다.",
-            "Prototype note: these lines aren't the one correct answer — they're example phrasing you could use in the real situation. You're free to say it differently. This text version lets you tap examples to see how the flow works; the next step is an AI that actually adapts to whatever you say."
+            "프로토타입 안내: 이 대화는 정해진 정답이 아니라, 실제 상황에서 참고할 수 있는 예시 표현입니다. 반드시 이대로 말해야 하는 건 아니고, 다른 표현을 써도 전혀 문제없습니다. AI 목소리 재생과 음성 인식은 실험 중인 기능입니다.",
+            "Prototype note: these lines aren't the one correct answer — they're example phrasing you could use in the real situation. You're free to say it differently. AI voice playback and speech recognition are experimental features here."
           )}
         </p>
       </div>
 
       <main className="chat-main">
-        {history.map((message, index) => (
-          <div key={index} className={`chat-bubble-row ${message.speaker}`}>
-            <div className="chat-bubble">
-              <strong>{message.line.zh}</strong>
-              <small className="chat-pinyin">{message.line.pinyin}</small>
-              <small className="chat-translation">{t(message.line.ko, message.line.en)}</small>
+        {history.map((message, index) => {
+          if (message.speaker === "ai" || message.speaker === "learner") {
+            return (
+              <div key={index} className={`chat-bubble-row ${message.speaker === "ai" ? "ai" : "learner"}`}>
+                <div className="chat-bubble">
+                  {message.speaker === "ai" && (
+                    <button
+                      type="button"
+                      className="chat-speak-button"
+                      onClick={() => playLine(message.line.zh, index)}
+                      disabled={speakingIndex === index}
+                      aria-label={t("소리로 듣기", "Play audio")}
+                    >
+                      <Volume2 size={14} />
+                    </button>
+                  )}
+                  <strong>{message.line.zh}</strong>
+                  <small className="chat-pinyin">{message.line.pinyin}</small>
+                  <small className="chat-translation">{t(message.line.ko, message.line.en)}</small>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div key={index} className="chat-bubble-row learner">
+              <div className="chat-bubble chat-bubble-voice">
+                <span className="chat-bubble-tag">{t("직접 말한 표현", "What you said")}</span>
+                <strong className="chat-free-text">{message.heard}</strong>
+                <div className="chat-reference">
+                  <span>{t("참고 표현", "Reference")}</span>
+                  <small>{message.reference.zh}</small>
+                  <small className="chat-pinyin">{message.reference.pinyin}</small>
+                  <small className="chat-translation">{t(message.reference.ko, message.reference.en)}</small>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {!completed && (
           <div className="chat-choices">
+            <div className="chat-voice-area">
+              <button type="button" className={`chat-mic-button ${listening ? "listening" : ""}`} onClick={handleMicClick} disabled={!speechSupported || listening}>
+                <Mic size={18} />
+                {listening ? t("듣는 중...", "Listening...") : t("중국어로 말해보기", "Say it in Chinese")}
+              </button>
+              {voiceError && <p className="chat-voice-error">{voiceError}</p>}
+              {!speechSupported && (
+                <p className="chat-voice-error">
+                  {t("이 브라우저는 음성 인식을 지원하지 않아요. 크롬을 사용해보세요.", "This browser doesn't support speech recognition. Try Chrome.")}
+                </p>
+              )}
+            </div>
+
             <span className="chat-choices-label">
               {currentNode.choices.length > 1
-                ? t("이렇게 말할 수도 있어요 — 예시 중 하나를 눌러보세요", "Some ways you could say it — tap one example")
-                : t("이렇게 말할 수도 있어요", "One way you could say it")}
+                ? t("또는 예시 중 하나를 눌러보세요", "Or tap one of these examples")
+                : t("또는 예시를 눌러보세요", "Or tap this example")}
             </span>
             {currentNode.choices.map(choice => (
               <button key={choice.id} className="chat-choice" onClick={() => handleChoice(choice)}>

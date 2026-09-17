@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { saveLead } from "./leads";
+import { synthesizeSpeech } from "./tts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +21,16 @@ async function startServer() {
       return;
     }
     res.json({ ok: true });
+  });
+
+  app.post("/api/tts", async (req, res) => {
+    const result = await synthesizeSpeech(req.body?.text);
+    if (!result.ok) {
+      res.status(result.status).json({ ok: false, error: result.error });
+      return;
+    }
+    res.setHeader("Content-Type", result.contentType);
+    res.send(result.audio);
   });
 
   // Serve static files from dist/public in production
