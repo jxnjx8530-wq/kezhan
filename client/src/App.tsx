@@ -8,6 +8,9 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import PracticeIndex from "./pages/PracticeIndex";
 import PracticeScenario from "./pages/PracticeScenario";
+import Signup from "./pages/app/Signup";
+import Login from "./pages/app/Login";
+import Dashboard from "./pages/app/Dashboard";
 
 
 function Router() {
@@ -16,6 +19,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/practice"} component={PracticeIndex} />
       <Route path={"/practice/:slug"} component={PracticeScenario} />
+      <Route path={"/signup"} component={Signup} />
+      <Route path={"/login"} component={Login} />
+      <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
