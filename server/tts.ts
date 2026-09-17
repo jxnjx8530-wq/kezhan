@@ -8,7 +8,10 @@ const ELEVENLABS_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
 // model. Override with ELEVENLABS_VOICE_ID to use a voice from your own
 // ElevenLabs library instead.
 const DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
-const DEFAULT_MODEL_ID = "eleven_multilingual_v2";
+// Turbo, not the flagship multilingual model: broadly available on free
+// plans and cheaper per character. Override with ELEVENLABS_MODEL_ID if a
+// higher-quality model is available on the account.
+const DEFAULT_MODEL_ID = "eleven_turbo_v2_5";
 const MAX_TEXT_LENGTH = 500;
 
 export type SpeakResult =
@@ -49,8 +52,9 @@ export async function synthesizeSpeech(text: unknown): Promise<SpeakResult> {
   }
 
   if (!upstream.ok) {
-    console.error("ElevenLabs returned an error", upstream.status, await upstream.text());
-    return { ok: false, status: 502, error: `elevenlabs_error_${upstream.status}` };
+    const detail = await upstream.text();
+    console.error("ElevenLabs returned an error", upstream.status, detail);
+    return { ok: false, status: 502, error: `elevenlabs_error_${upstream.status}: ${detail.slice(0, 200)}` };
   }
 
   const audio = Buffer.from(await upstream.arrayBuffer());

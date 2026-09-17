@@ -6,7 +6,7 @@
 
 const ELEVENLABS_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
 const DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
-const DEFAULT_MODEL_ID = "eleven_multilingual_v2";
+const DEFAULT_MODEL_ID = "eleven_turbo_v2_5";
 const MAX_TEXT_LENGTH = 500;
 
 export default async function handler(req: any, res: any) {
@@ -52,8 +52,9 @@ export default async function handler(req: any, res: any) {
   }
 
   if (!upstream.ok) {
-    console.error("ElevenLabs returned an error", upstream.status, await upstream.text());
-    res.status(502).json({ ok: false, error: `elevenlabs_error_${upstream.status}` });
+    const detail = await upstream.text();
+    console.error("ElevenLabs returned an error", upstream.status, detail);
+    res.status(502).json({ ok: false, error: `elevenlabs_error_${upstream.status}: ${detail.slice(0, 200)}` });
     return;
   }
 
