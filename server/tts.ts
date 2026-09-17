@@ -7,7 +7,10 @@ const ELEVENLABS_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
 // "Rachel", one of ElevenLabs' premade voices; works with the multilingual
 // model. Override with ELEVENLABS_VOICE_ID to use a voice from your own
 // ElevenLabs library instead.
-const DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
+// A voice added to this account's own "My Voices" (library voices can't be
+// used via the API on the free plan — only voices actually in your own
+// collection). Override with ELEVENLABS_VOICE_ID for a different voice.
+const DEFAULT_VOICE_ID = "bhJUNIXWQQ94l8eI2VUf";
 // Turbo, not the flagship multilingual model: broadly available on free
 // plans and cheaper per character. Override with ELEVENLABS_MODEL_ID if a
 // higher-quality model is available on the account.
