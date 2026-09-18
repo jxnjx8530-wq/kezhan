@@ -248,7 +248,9 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
         </p>
       </div>
 
-      <div className="chat-scene-peek" aria-hidden="true" />
+      <div className="chat-scene-peek">
+        <img className="chat-scene-hero" src={scenario.image} alt={t(scenario.ko.title, scenario.en.title)} />
+      </div>
 
       <main className="chat-main">
         {history.map((message, index) => {
