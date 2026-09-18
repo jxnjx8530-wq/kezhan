@@ -120,8 +120,10 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
       if (!node) return;
       const xRatio = event.clientX / window.innerWidth - 0.5;
       const yRatio = event.clientY / window.innerHeight - 0.5;
-      node.style.setProperty("--parallax-x", `${xRatio * -18}px`);
-      node.style.setProperty("--parallax-y", `${yRatio * -14}px`);
+      node.style.setProperty("--parallax-x", `${xRatio * -22}px`);
+      node.style.setProperty("--parallax-y", `${yRatio * -16}px`);
+      node.style.setProperty("--tilt-x", `${yRatio * 9}deg`);
+      node.style.setProperty("--tilt-y", `${xRatio * -11}deg`);
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
@@ -217,7 +219,9 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
   return (
     <div className="chat-shell">
       <div className="chat-scene-bg" ref={sceneRef} aria-hidden="true">
-        <img src={scenario.image} alt="" />
+        <div className="chat-scene-drift">
+          <img src={scenario.image} alt="" />
+        </div>
       </div>
 
       <header className="chat-header">

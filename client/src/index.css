@@ -2121,16 +2121,30 @@ p {
   z-index: -1;
   overflow: hidden;
   background: var(--ink);
+  perspective: 1200px;
+}
+.chat-scene-drift {
+  position: absolute;
+  inset: -40px;
+  animation: chat-scene-drift 22s ease-in-out infinite alternate;
+}
+@keyframes chat-scene-drift {
+  0% {
+    transform: scale(1.1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.18) translate(-1.6%, 1.4%);
+  }
 }
 .chat-scene-bg img {
-  position: absolute;
-  inset: -24px;
-  width: calc(100% + 48px);
-  height: calc(100% + 48px);
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center 42%;
-  transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0);
+  transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 200ms var(--ease-out);
+  will-change: transform;
 }
 .chat-scene-peek {
   flex-shrink: 0;
