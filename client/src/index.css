@@ -2110,10 +2110,31 @@ p {
 
 /* Practice prototype: text-based conversation chat */
 .chat-shell {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--ivory);
+}
+.chat-scene-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--ink);
+}
+.chat-scene-bg img {
+  position: absolute;
+  inset: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  object-fit: cover;
+  object-position: center 42%;
+  transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0);
+  transition: transform 200ms var(--ease-out);
+}
+.chat-scene-peek {
+  flex-shrink: 0;
+  height: min(34vh, 260px);
 }
 .chat-header {
   position: sticky;
@@ -2153,20 +2174,6 @@ p {
   font-family: "Source Serif 4", serif;
   font-size: 13px;
 }
-.chat-scene {
-  overflow: hidden;
-  width: min(420px, 100%);
-  margin: 16px auto 0;
-  border-radius: 3px;
-  aspect-ratio: 16 / 9;
-}
-.chat-scene img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
 .chat-note {
   display: flex;
   gap: 10px;
@@ -2188,13 +2195,19 @@ p {
   line-height: 1.6;
 }
 .chat-main {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 14px;
-  width: min(680px, 100%);
-  margin: 0 auto;
-  padding: 28px 20px 60px;
+  width: 100%;
+  max-width: none;
+  margin-top: -20px;
+  padding: 28px max(20px, calc((100vw - 680px) / 2)) 60px;
+  background: var(--ivory);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 32px rgb(33 30 27 / 14%);
 }
 .chat-bubble-row {
   display: flex;
