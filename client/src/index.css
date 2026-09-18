@@ -2148,7 +2148,7 @@ p {
 }
 .chat-scene-peek {
   flex-shrink: 0;
-  height: min(34vh, 260px);
+  height: clamp(240px, 30vw, 480px);
 }
 .chat-header {
   position: sticky;
