@@ -1,7 +1,8 @@
 /**
  * Generic conversation practice, now with voice: the AI's lines can be
- * played aloud (ElevenLabs TTS via /api/tts), and the learner can speak
- * their reply instead of tapping one (browser Web Speech API STT). Renders
+ * played aloud and the learner can speak their reply instead of tapping
+ * one, both via the browser's built-in Web Speech API (no server/API key
+ * needed). Renders
  * whichever scenario the slug points to. The scripted lines are reference
  * examples of how the exchange could go, not a required script — speaking
  * or tapping one just moves the conversation forward, the way real
@@ -10,7 +11,7 @@
  * learner's own phrasing, with the closest line shown only as a reference.
  */
 import { ArrowLeft, Mic, RotateCcw, Volume2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 
@@ -109,25 +110,9 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const [listening, setListening] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const sceneRef = useRef<HTMLDivElement | null>(null);
 
   const currentNode = dialogue[currentNodeId];
   const speechSupported = Boolean(getSpeechRecognitionCtor());
-
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const node = sceneRef.current;
-      if (!node) return;
-      const xRatio = event.clientX / window.innerWidth - 0.5;
-      const yRatio = event.clientY / window.innerHeight - 0.5;
-      node.style.setProperty("--parallax-x", `${xRatio * -22}px`);
-      node.style.setProperty("--parallax-y", `${yRatio * -16}px`);
-      node.style.setProperty("--tilt-x", `${yRatio * 9}deg`);
-      node.style.setProperty("--tilt-y", `${xRatio * -11}deg`);
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   const advance = (nextId: string, nextHistory: Message[]) => {
     if (nextId === "end") {
@@ -218,12 +203,6 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
 
   return (
     <div className="chat-shell">
-      <div className="chat-scene-bg" ref={sceneRef} aria-hidden="true">
-        <div className="chat-scene-drift">
-          <img src={scenario.image} alt="" />
-        </div>
-      </div>
-
       <header className="chat-header">
         <Link href="/" className="chat-back">
           <ArrowLeft size={18} />
@@ -238,6 +217,10 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
         </span>
       </header>
 
+      <div className="chat-scene">
+        <img src={scenario.image} alt={t(scenario.ko.title, scenario.en.title)} />
+      </div>
+
       <div className="chat-note">
         <img src={BRAND_MARK} alt="" />
         <p>
@@ -246,10 +229,6 @@ function ScenarioChat({ scenario }: { scenario: ScenarioWithImage }) {
             "Prototype note: these lines aren't the one correct answer — they're example phrasing you could use in the real situation. You're free to say it differently. AI voice playback and speech recognition are experimental features here."
           )}
         </p>
-      </div>
-
-      <div className="chat-scene-peek">
-        <img className="chat-scene-hero" src={scenario.image} alt={t(scenario.ko.title, scenario.en.title)} />
       </div>
 
       <main className="chat-main">

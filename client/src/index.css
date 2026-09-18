@@ -2110,56 +2110,10 @@ p {
 
 /* Practice prototype: text-based conversation chat */
 .chat-shell {
-  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-.chat-scene-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  background: var(--ink);
-  perspective: 1200px;
-}
-.chat-scene-drift {
-  position: absolute;
-  inset: -40px;
-  animation: chat-scene-drift 22s ease-in-out infinite alternate;
-}
-@keyframes chat-scene-drift {
-  0% {
-    transform: scale(1.1) translate(0, 0);
-  }
-  100% {
-    transform: scale(1.18) translate(-1.6%, 1.4%);
-  }
-}
-.chat-scene-bg img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 42%;
-  filter: blur(26px) brightness(0.82) saturate(1.05);
-  transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-  transition: transform 200ms var(--ease-out);
-  will-change: transform;
-}
-.chat-scene-peek {
-  position: relative;
-  flex-shrink: 0;
-  overflow: hidden;
-  height: clamp(240px, 30vw, 480px);
-}
-.chat-scene-hero {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center center;
+  background: var(--ivory);
 }
 .chat-header {
   position: sticky;
@@ -2199,6 +2153,20 @@ p {
   font-family: "Source Serif 4", serif;
   font-size: 13px;
 }
+.chat-scene {
+  overflow: hidden;
+  width: min(420px, 100%);
+  margin: 16px auto 0;
+  border-radius: 3px;
+  aspect-ratio: 16 / 9;
+}
+.chat-scene img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
 .chat-note {
   display: flex;
   gap: 10px;
@@ -2220,20 +2188,13 @@ p {
   line-height: 1.6;
 }
 .chat-main {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 14px;
-  width: 100%;
-  max-width: none;
-  min-height: 40vh;
-  margin-top: -20px;
-  padding: 28px max(20px, calc((100vw - 680px) / 2)) 60px;
-  background: rgb(245 240 231 / 85%);
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -12px 32px rgb(33 30 27 / 20%);
+  width: min(680px, 100%);
+  margin: 0 auto;
+  padding: 28px 20px 60px;
 }
 .chat-bubble-row {
   display: flex;
