@@ -2217,11 +2217,14 @@ p {
   gap: 14px;
   width: 100%;
   max-width: none;
+  min-height: 40vh;
   margin-top: -20px;
   padding: 28px max(20px, calc((100vw - 680px) / 2)) 60px;
-  background: var(--ivory);
+  background: rgb(245 240 231 / 78%);
+  backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 -12px 32px rgb(33 30 27 / 14%);
+  box-shadow: 0 -12px 32px rgb(33 30 27 / 20%);
 }
 .chat-bubble-row {
   display: flex;
